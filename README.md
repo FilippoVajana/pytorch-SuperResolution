@@ -1,2 +1,2 @@
 # pytorch-SuperResolution
-A neural network for Super Resolution Single Frame crafted with PyTorch
+A neural network for a Single Frame Super Resolution task.
