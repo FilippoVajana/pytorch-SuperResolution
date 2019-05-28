@@ -27,15 +27,26 @@ def show_data(ex, lab):
 
 
 if __name__ == "__main__":
-    ds = SRDataset("data/s_train", 1)
+    ds = SRDataset("data/s_train")
     model = Upconv()
     train_loader = tdata.DataLoader(ds, batch_size = 2, shuffle = True)
     trainer = Trainer(model)
     t = trainer.train(1, train_loader, None)
 
-    for e,l in ds:    
-        pred = model(e.unsqueeze(0))
-        show_data(pred, l)
+    from sr_utils import *
+    t = tvision.transforms.Compose([tvision.transforms.ToTensor()])
+    for idx, (e,l) in enumerate(ds):    
+        original = Image.open(ds.examples[idx])
+        print(t(original).shape)
+
+        output = model(e.unsqueeze(0))
+        output = output.squeeze(0).detach()
+        print(output.shape)
+
+        print(l.shape)
+        
+
+        show_results([(original, output, l)])
         break
 
     

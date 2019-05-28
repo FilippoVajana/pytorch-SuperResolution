@@ -34,6 +34,28 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
         except StopIteration:
             pass
 
+def show_results(res):
+    """
+    Show model output compared with source and label images.\\    
+    Args:
+        res [(original, output, label)]: a list of tuples of three Pytorch Tensor images.
+    """
+    cols = 3
+    rows = int(len(res) / cols)
+
+    Image.imshow(res[0][0])
+
+    fig, axarr = plt.subplots(rows, cols)
+    
+    for idx in range(len(axarr)):
+        origin, output, label = res[idx]
+        print(origin.shape, output.shape, label.shape)
+        axarr[idx,0].imshow(origin)
+        axarr[idx,1].imshow(output)
+        axarr[idx,2].imshow(label)
+
+    plt.show()
+
 if __name__ == "__main__":
     src = "data/train"
     tgt = "data/s_train"
