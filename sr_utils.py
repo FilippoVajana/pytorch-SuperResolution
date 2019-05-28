@@ -1,6 +1,7 @@
 from sr_imports import *
 
 def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor = 2):
+    print("Building train data")
 
     files = os.listdir(source_dir)
 
@@ -19,12 +20,15 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
             l_name = next(labels)
 
             e = Image.open(os.path.join(source_dir, e_name))\
-                .resize((example_size, example_size))
-            l = Image.open(os.path.join(source_dir, l_name))\
-                .resize((example_size*mult_factor, example_size*mult_factor))
+                .resize((example_size, example_size))\
+                    .convert('L')
 
-            print(e.format, e.size, e.mode)
-            print(l.format, l.size, l.mode)
+            l = Image.open(os.path.join(source_dir, l_name))\
+                .resize((example_size*mult_factor, example_size*mult_factor))\
+                    .convert('L')
+
+            # print(e.format, e.size, e.mode)
+            # print(l.format, l.size, l.mode)
 
             e.save(os.path.join(target_dir, e_name))
             l.save(os.path.join(target_dir, l_name))
@@ -38,28 +42,26 @@ def show_results(res):
     """
     Show model output compared with source and label images.\\    
     Args:
-        res [(original, output, label)]: a list of tuples of three Pytorch Tensor images.
+        res (original, output, label): A tuple of three Pytorch Tensor images.
     """
     cols = 3
     rows = int(len(res) / cols)
+    toPil = tvision.transforms.ToPILImage()
+    origin, output, label = res
 
-    Image.imshow(res[0][0])
-
-    fig, axarr = plt.subplots(rows, cols)
+    fig = plt.figure()
     
-    for idx in range(len(axarr)):
-        origin, output, label = res[idx]
-        print(origin.shape, output.shape, label.shape)
-        axarr[idx,0].imshow(origin)
-        axarr[idx,1].imshow(output)
-        axarr[idx,2].imshow(label)
+    ax1 = fig.add_subplot(rows, cols, 1)
+    ax1.set_title("train image {}".format(origin.shape))
+    plt.imshow(toPil(origin))
 
-    plt.show()
+    ax1 = fig.add_subplot(rows, cols, 2)
+    ax1.set_title("output image {}".format(output.shape))
+    plt.imshow(toPil(output))
 
-if __name__ == "__main__":
-    src = "data/train"
-    tgt = "data/s_train"
-    num = 10
-    size = 128
+    ax1 = fig.add_subplot(rows, cols, 3)
+    ax1.set_title("label image {}".format(label.shape))
+    plt.imshow(toPil(label))
 
-    resize_img_batch(src, tgt, num, size, 2)
+    plt.show()   
+    

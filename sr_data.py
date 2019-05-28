@@ -1,6 +1,6 @@
 from sr_imports import *
+from torchvision import transforms
 
-CACHE = dict()
 class SRDataset(tdata.Dataset):
     """Dataset specific for Super Resolution.
     
@@ -36,9 +36,15 @@ class SRDataset(tdata.Dataset):
         e = Image.open(self.examples[index])
         l = Image.open(self.labels[index])
 
+        # print(e.format, e.size, e.mode)
+        # print(l.format, l.size, l.mode)
+
         # define data transformations
-        example_t = tvision.transforms.Compose([ tvision.transforms.ToTensor() ])
-        label_t = tvision.transforms.Compose([ tvision.transforms.ToTensor() ])
+        example_t = tvision.transforms.Compose([transforms.ToTensor()])
+        label_t = tvision.transforms.Compose([transforms.ToTensor()])
+
+        # print(example_t(e).shape)
+        # print(label_t(l).shape)
 
         return [example_t(e), label_t(l)]
 

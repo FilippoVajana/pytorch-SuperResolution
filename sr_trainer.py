@@ -1,15 +1,18 @@
 from sr_imports import *
 from sr_data import SRDataset
-from sr_model import SRModel
 
 class Trainer():
     def __init__(self, model):
-        # set gpu device
+        # set gpu device        
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        
         # set model
         self.model = model.to(self.device)
+
         # set default optimizer
+        # self.optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
         self.optimizer = torch.optim.Adam(model.parameters())
+
         # set default loss function
         self.loss_fn = torch.nn.MSELoss()
     
