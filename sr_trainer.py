@@ -5,6 +5,7 @@ class Trainer():
     def __init__(self, model):
         # set gpu device        
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        print("Using {}".format(self.device))
         
         # set model
         self.model = model.to(self.device)
