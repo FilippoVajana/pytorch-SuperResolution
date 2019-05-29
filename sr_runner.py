@@ -60,7 +60,7 @@ if __name__ == "__main__":
     trainer = Trainer(model)
     if do_train:
         trainer.train(train_epochs, loader, None)    
-
+    model = model.to('cpu')
     # evaluate   
     for idx, (e,l) in enumerate(dataset):    
         original = Image.open(dataset.examples[idx])
