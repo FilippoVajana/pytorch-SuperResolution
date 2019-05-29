@@ -10,7 +10,8 @@ if __name__ == "__main__":
     parser.add_argument('-ds', type=int, action='store', help='Train data size')
     parser.add_argument('-t', action='store_true', help='Train the model')
     parser.add_argument('-s', action='store_true', help='Save prediction result')
-    parser.add_argument('-e', type=int, action='store', help='Number of epoch')
+    parser.add_argument('-e', type=int, action='store', help='Number of epoch')    
+    parser.add_argument('-tc', action='store_true', help='Load model and continue the training')
 
     args = parser.parse_args()
     # print(args)
@@ -22,7 +23,8 @@ if __name__ == "__main__":
     train_epochs = 5
     train_img_size = 128
     label_img_size = train_img_size * 2
-    result_dir = "data/result/"  
+    result_dir = "data/result/"
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    
 
     # init folders
     try:  
@@ -43,6 +45,7 @@ if __name__ == "__main__":
     do_build_tdata = args.d
     train_examples = args.ds if do_build_tdata and args.ds is not None else train_examples
     do_train = args.t
+    do_continue = args.tc
     train_epochs = args.e if args.e is not None else train_epochs
 
     # init model
@@ -57,19 +60,35 @@ if __name__ == "__main__":
     loader = tdata.DataLoader(dataset, batch_size=2, shuffle=True)
 
     # train
-    trainer = Trainer(model)
-    if do_train:
-        trainer.train(train_epochs, loader, None)    
-    model = model.to('cpu')
+    trainer = Trainer(model, device)
+    if do_train == True:
+        print("Start training")
+        trainer.train(train_epochs, loader, None)
+        print("Saving model")
+        torch.save(model.state_dict(), 'model.pt')
+
+    if do_train == False:
+        print("Loading model")
+        model.load_state_dict(torch.load('model.pt'))
+        if do_continue == True:
+            print("Continue training")
+            trainer.train(train_epochs, loader, None)
+            print("Update model")
+            torch.save(model.state_dict(), 'model.pt')
+
+
     # evaluate   
+    model.eval()
+    toTensor = tvision.transforms.ToTensor()
     for idx, (e,l) in enumerate(dataset):    
         original = Image.open(dataset.examples[idx])
-        t = tvision.transforms.ToTensor()
-        original = t(original)       
+        original = toTensor(original).to(device)
+        e.to(device)
+        l.to(device)  
 
         output = model(e.unsqueeze(0))
         output = output.squeeze(0).detach()  
 
         fig = show_results((original, output, l), display=False)
-        fig.savefig(os.path.join(result_dir, "res_e{}_s{}".format(train_epochs, idx)), dpi=250)
+        fig.savefig(os.path.join(result_dir, "res_epochs{}_sample{}".format(train_epochs, idx)), dpi=250)
         

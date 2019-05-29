@@ -2,9 +2,9 @@ from sr_imports import *
 from sr_data import SRDataset
 
 class Trainer():
-    def __init__(self, model):
+    def __init__(self, model, device):
         # set gpu device        
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = device
         print("Using {}".format(self.device))
         
         # set model
