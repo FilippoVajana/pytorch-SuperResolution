@@ -38,7 +38,7 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
         except StopIteration:
             pass
 
-def show_results(res):
+def show_results(res, display=True):
     """
     Show model output compared with source and label images.\\    
     Args:
@@ -63,5 +63,7 @@ def show_results(res):
     ax1.set_title("label image {}".format(label.shape))
     plt.imshow(toPil(label))
 
-    plt.show()   
+    if display == True : plt.show()
+
+    return fig
     

@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # run parameters
     train_dir = "data/small_train_1"
     train_examples = 10
-    train_epochs = 10
+    train_epochs = 1
     train_img_size = 128
     label_img_size = train_img_size * 2
 
@@ -31,7 +31,8 @@ if __name__ == "__main__":
     trainer = Trainer(model)
     train_loss, _ = trainer.train(train_epochs, loader, None)    
 
-    # evaluate    
+    # evaluate 
+    result_dir = "data/result/"    
     for idx, (e,l) in enumerate(dataset):    
         original = Image.open(dataset.examples[idx])
         t = tvision.transforms.ToTensor()
@@ -40,7 +41,6 @@ if __name__ == "__main__":
         output = model(e.unsqueeze(0))
         output = output.squeeze(0).detach()  
 
-        show_results((original, output, l))
-        break
-
-    
+        fig = show_results((original, output, l), display=False)
+        fig.savefig(os.path.join(result_dir, "res_e{}_s{}".format(train_epochs, idx)))
+        
