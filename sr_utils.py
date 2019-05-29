@@ -50,7 +50,8 @@ def show_results(res, display=True):
     origin, output, label = res
 
     fig = plt.figure()
-    
+    fig.set_size_inches(20, 5)    
+
     ax1 = fig.add_subplot(rows, cols, 1)
     ax1.set_title("train image {}".format(origin.shape))
     plt.imshow(toPil(origin))

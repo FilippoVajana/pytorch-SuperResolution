@@ -6,22 +6,51 @@ from sr_utils import *
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Super Resolution - Neural Network")
-    parser.add_argument('build_data', action="store", default=False, help='Build train data')
-    args = parser.parse_args()
+    parser.add_argument('-d', action='store_true', help='Build train data')
+    parser.add_argument('-ds', type=int, action='store', help='Train data size')
+    parser.add_argument('-t', action='store_true', help='Train the model')
+    parser.add_argument('-s', action='store_true', help='Save prediction result')
+    parser.add_argument('-e', type=int, action='store', help='Number of epoch')
 
-    # run parameters
+    args = parser.parse_args()
+    # print(args)
+
+    # default run parameters
+    source_dir = "data/train"
     train_dir = "data/small_train_1"
     train_examples = 10
-    train_epochs = 1000
+    train_epochs = 5
     train_img_size = 128
     label_img_size = train_img_size * 2
+    result_dir = "data/result/"  
+
+    # init folders
+    try:  
+        os.mkdir(train_dir)
+    except OSError:  
+        print ("Creation of the directory %s failed" % train_dir)
+    else:  
+        print ("Successfully created the directory %s " % train_dir)
+
+    try:  
+        os.mkdir(result_dir)
+    except OSError:  
+        print ("Creation of the directory %s failed" % result_dir)
+    else:  
+        print ("Successfully created the directory %s " % result_dir)
+
+    # load cli params
+    do_build_tdata = args.d
+    train_examples = args.ds if do_build_tdata and args.ds is not None else train_examples
+    do_train = args.t
+    train_epochs = args.e if args.e is not None else train_epochs
 
     # init model
     model = Upconv(train_img_size)
 
     # init train data
-    # if args.build_data == True:  
-    # resize_img_batch("data/train", "data/small_train_1", 10, train_img_size)
+    if do_build_tdata:  
+        resize_img_batch(source_dir, train_dir, train_examples, train_img_size)
 
     # init data loader
     dataset = SRDataset(train_dir)
@@ -29,10 +58,10 @@ if __name__ == "__main__":
 
     # train
     trainer = Trainer(model)
-    train_loss, _ = trainer.train(train_epochs, loader, None)    
+    if do_train:
+        trainer.train(train_epochs, loader, None)    
 
-    # evaluate 
-    result_dir = "data/result/"    
+    # evaluate   
     for idx, (e,l) in enumerate(dataset):    
         original = Image.open(dataset.examples[idx])
         t = tvision.transforms.ToTensor()
@@ -42,5 +71,5 @@ if __name__ == "__main__":
         output = output.squeeze(0).detach()  
 
         fig = show_results((original, output, l), display=False)
-        fig.savefig(os.path.join(result_dir, "res_e{}_s{}".format(train_epochs, idx)))
+        fig.savefig(os.path.join(result_dir, "res_e{}_s{}".format(train_epochs, idx)), dpi=250)
         
