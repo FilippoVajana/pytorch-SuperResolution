@@ -7,17 +7,19 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
 
     # get examples path
     example_re = re.compile(r'\d*x\d*.png')
-    examples = filter(example_re.match, files)
+    examples = list(filter(example_re.match, files))
+    examples.sort()
 
     # get labels path
     label_re = re.compile(r'\d{4}.png')
-    labels = filter(label_re.match, files)
+    labels = list(filter(label_re.match, files))
+    labels.sort()
 
     # load and resize images
     for i in range(img_num):
         try:
-            e_name = next(examples)
-            l_name = next(labels)
+            e_name = examples[i]
+            l_name = labels[i]
 
             e = Image.open(os.path.join(source_dir, e_name))\
                 .resize((example_size, example_size))\
