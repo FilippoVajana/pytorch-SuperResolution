@@ -12,6 +12,7 @@ if __name__ == "__main__":
     parser.add_argument('-s', action='store_true', help='Save prediction result')
     parser.add_argument('-e', type=int, action='store', help='Number of epoch')    
     parser.add_argument('-tc', action='store_true', help='Load model and continue the training')
+    parser.add_argument('-clear', action='store_true', help='Remove used files')
 
     args = parser.parse_args()
 
@@ -49,9 +50,10 @@ if __name__ == "__main__":
 
     # init model
     model = Upconv(train_img_size)
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
+    dev_count = torch.cuda.device_count()
+    if dev_count > 1:
+        print("Let's use", dev_count, "GPUs!")
+        model = nn.DataParallel(model, list(range(0, dev_count)))
 
     # init train data
     if do_build_tdata:  
@@ -96,7 +98,14 @@ if __name__ == "__main__":
         # print(original.type(), output.type(), l.type())
 
         fig = show_results((original, output, l), display=False)
+
+        print("Saving result {}".format(idx))        
         fig.savefig(os.path.join(result_dir, "res_epochs{}_sample{}".format(train_epochs, idx)), dpi=250)
         res_count -= 1
         if res_count < 0: break
+
+    # clear
+    if args.clear:
+        shutil.rmtree(train_dir)
+        shutil.rmtree(result_dir)
         
