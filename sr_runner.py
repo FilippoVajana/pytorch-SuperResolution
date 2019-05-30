@@ -80,13 +80,10 @@ if __name__ == "__main__":
     # evaluate   
     model.eval()
     toTensor = tvision.transforms.ToTensor()
+    res_count = 5
     for idx, (e,l) in enumerate(dataset):    
         original = Image.open(dataset.examples[idx])
         original = toTensor(original)
-
-        # original = toTensor(original).to(device)
-        # e = e.to(device)
-        # l = l.to(device)
 
         # move model to cpu
         model.cpu()
@@ -98,4 +95,6 @@ if __name__ == "__main__":
 
         fig = show_results((original, output, l), display=False)
         fig.savefig(os.path.join(result_dir, "res_epochs{}_sample{}".format(train_epochs, idx)), dpi=250)
+        res_count -= 1
+        if res_count < 0: break
         
