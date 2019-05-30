@@ -99,13 +99,15 @@ if __name__ == "__main__":
 
         fig = show_results((original, output, l), display=False)
 
-        print("Saving result {}".format(idx))        
+        if args.s:
+            print("Saving result {}".format(idx))        
         fig.savefig(os.path.join(result_dir, "res_epochs{}_sample{}".format(train_epochs, idx)), dpi=250)
         res_count -= 1
         if res_count < 0: break
 
     # clear
     if args.clear:
+        print("Cleaning")
         shutil.rmtree(train_dir)
         shutil.rmtree(result_dir)
         
