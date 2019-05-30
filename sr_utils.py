@@ -14,6 +14,7 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
     labels = filter(label_re.match, files)
 
     # load and resize images
+    img_num = len(examples) if img_num == 0 else img_num
     for i in range(img_num):
         try:
             e_name = next(examples)
