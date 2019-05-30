@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     # init data loader
     dataset = SRDataset(train_dir)
-    loader = tdata.DataLoader(dataset, batch_size=2, shuffle=True)
+    loader = tdata.DataLoader(dataset, batch_size=10, shuffle=True)
 
     # train
     trainer = Trainer(model, device)
