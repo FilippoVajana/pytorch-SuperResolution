@@ -83,8 +83,8 @@ if __name__ == "__main__":
     for idx, (e,l) in enumerate(dataset):    
         original = Image.open(dataset.examples[idx])
         original = toTensor(original).to(device)
-        e.to(device)
-        l.to(device)  
+        e = e.to(device)
+        l = l.to(device)  
 
         output = model(e.unsqueeze(0))
         output = output.squeeze(0).detach()  
