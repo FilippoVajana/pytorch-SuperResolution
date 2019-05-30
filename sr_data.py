@@ -18,10 +18,12 @@ class SRDataset(tdata.Dataset):
         # get examples path
         example_re = re.compile(r'\d*x\d*.png')
         self.examples = [os.path.join(root_dir, name) for name in list(filter(example_re.match, files))]
+        self.examples.sort()
 
         # get labels path
         label_re = re.compile(r'\d{4}.png')
         self.labels = [os.path.join(root_dir, name) for name in list(filter(label_re.match, files))]
+        self.labels.sort()
 
     def __len__(self):
         return len(self.examples)
