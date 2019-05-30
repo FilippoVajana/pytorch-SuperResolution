@@ -13,6 +13,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', type=int, action='store', help='Number of epoch')    
     parser.add_argument('-tc', action='store_true', help='Load model and continue the training')
     parser.add_argument('-clear', action='store_true', help='Remove used files')
+    parser.add_argument('-gpu', type=int, action='store', default=0, help='Select the gpu')
 
     args = parser.parse_args()
 
@@ -23,8 +24,10 @@ if __name__ == "__main__":
     train_epochs = 5
     train_img_size = 128
     label_img_size = train_img_size * 2
-    result_dir = "data/result/"
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    
+    result_dir = "data/result/"    
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") \
+        if args.gpu == None \
+        else torch.device("cuda:{}".format(args.gpu))    
 
     # init folders
     try:  
