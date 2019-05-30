@@ -94,7 +94,7 @@ if __name__ == "__main__":
         output = model(e.unsqueeze(0))
         output = output.squeeze(0).detach() 
 
-        print(original.type(), output.device(), l.device())
+        print(original.type(), output.type(), l.type())
 
         fig = show_results((original, output, l), display=False)
         fig.savefig(os.path.join(result_dir, "res_epochs{}_sample{}".format(train_epochs, idx)), dpi=250)
