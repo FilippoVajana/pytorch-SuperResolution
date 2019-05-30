@@ -24,7 +24,7 @@ if __name__ == "__main__":
     train_img_size = 128
     label_img_size = train_img_size * 2
     result_dir = "data/result/"
-    device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")    
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")    
 
     # init folders
     try:  
