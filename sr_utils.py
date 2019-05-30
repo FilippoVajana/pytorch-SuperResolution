@@ -15,6 +15,9 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
     labels = list(filter(label_re.match, files))
     labels.sort()
 
+    # check img number
+    img_num = len(examples) if img_num < 0 else img_num
+
     # load and resize images
     for i in range(img_num):
         try:

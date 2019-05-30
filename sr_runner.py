@@ -49,6 +49,9 @@ if __name__ == "__main__":
 
     # init model
     model = Upconv(train_img_size)
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        model = nn.DataParallel(model)
 
     # init train data
     if do_build_tdata:  
