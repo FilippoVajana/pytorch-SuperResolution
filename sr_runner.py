@@ -53,7 +53,7 @@ if __name__ == "__main__":
     dev_count = torch.cuda.device_count()
     if dev_count > 1:
         print("Let's use", dev_count, "GPUs!")
-        model = nn.DataParallel(model, list(range(0, dev_count)))
+        model = nn.DataParallel(model, [1])
 
     # init train data
     if do_build_tdata:  
