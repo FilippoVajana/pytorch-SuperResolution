@@ -82,6 +82,7 @@ if __name__ == "__main__":
     toTensor = tvision.transforms.ToTensor()
     for idx, (e,l) in enumerate(dataset):    
         original = Image.open(dataset.examples[idx])
+<<<<<<< HEAD
         original = toTensor(original)
 
         # original = toTensor(original).to(device)
@@ -90,6 +91,11 @@ if __name__ == "__main__":
 
         # move model to cpu
         model.cpu()
+=======
+        original = toTensor(original).to(device)
+        e = e.to(device)
+        l = l.to(device)  
+>>>>>>> caa18cee871e0a24fca38f93dcf142c11eb53f94
 
         output = model(e.unsqueeze(0))
         output = output.squeeze(0).detach() 
