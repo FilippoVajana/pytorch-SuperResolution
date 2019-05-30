@@ -20,8 +20,6 @@ class SRDataset(tdata.Dataset):
         self.examples = [os.path.join(root_dir, name) for name in list(filter(example_re.match, files))]
         self.examples.sort()
 
-        print(self.examples)
-
         # get labels path
         label_re = re.compile(r'\d{4}.png')
         self.labels = [os.path.join(root_dir, name) for name in list(filter(label_re.match, files))]

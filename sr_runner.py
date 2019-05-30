@@ -14,7 +14,6 @@ if __name__ == "__main__":
     parser.add_argument('-tc', action='store_true', help='Load model and continue the training')
 
     args = parser.parse_args()
-    # print(args)
 
     # default run parameters
     source_dir = "data/train"
