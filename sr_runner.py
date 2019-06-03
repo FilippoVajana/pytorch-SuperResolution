@@ -6,64 +6,47 @@ from sr_utils import *
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Super Resolution - Neural Network")
-    parser.add_argument('-d', action='store_true', help='Build train data')
-    parser.add_argument('-ds', type=int, action='store', help='Train data size')
     parser.add_argument('-t', action='store_true', help='Train the model')
     parser.add_argument('-s', action='store_true', help='Save prediction result')
     parser.add_argument('-e', type=int, action='store', help='Number of epoch')    
     parser.add_argument('-tc', action='store_true', help='Load model and continue the training')
     parser.add_argument('-clear', action='store_true', help='Remove used files')
     parser.add_argument('-gpu', type=int, action='store', default=0, help='Select the gpu')
-
     args = parser.parse_args()
 
-    # default run parameters
-    source_dir = "data/train"
-    train_dir = "data/small_train_1"
+
+    ### default run parameters
+    root_dir = "data/div2k/"
+    full_train_dir = os.path.join(root_dir, "train/bicubic_2x")
+    small_train_dir = os.path.join(root_dir, "train/bicubic_2x_small")
+    result_dir = os.path.join(root_dir, "result")
+
     train_examples = 10
     train_epochs = 5
+
     train_img_size = 128
     label_img_size = train_img_size * 2
-    result_dir = "data/result/"    
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") \
-        if args.gpu == None \
-        else torch.device("cuda:{}".format(args.gpu))    
+    device = get_device(args.gpu)
 
-    # init folders
-    try:  
-        os.mkdir(train_dir)
-    except OSError:  
-        print ("Creation of the directory %s failed" % train_dir)
-    else:  
-        print ("Successfully created the directory %s " % train_dir)
 
-    try:  
-        os.mkdir(result_dir)
-    except OSError:  
-        print ("Creation of the directory %s failed" % result_dir)
-    else:  
-        print ("Successfully created the directory %s " % result_dir)
+    ### init folders
+    create_directory(result_dir)
+    
 
-    # load cli params
-    do_build_tdata = args.d
-    train_examples = args.ds if do_build_tdata and args.ds is not None else train_examples
+    ### load cli params
     do_train = args.t
     do_continue = args.tc
     train_epochs = args.e if args.e is not None else train_epochs
 
-    # init model
+    ### init model
     model = Upconv(train_img_size)
     dev_count = torch.cuda.device_count()
     # if dev_count > 1:
     #     print("Let's use", dev_count, "GPUs!")
     #     model = nn.DataParallel(model, [1])
-
-    # init train data
-    if do_build_tdata:  
-        resize_img_batch(source_dir, train_dir, train_examples, train_img_size)
-
+    
     # init data loader
-    dataset = SRDataset(train_dir)
+    dataset = SRDataset(full_train_dir)
     loader = tdata.DataLoader(dataset, batch_size=10, shuffle=True)
 
     # train
@@ -111,6 +94,6 @@ if __name__ == "__main__":
     # clear
     if args.clear:
         print("Cleaning")
-        shutil.rmtree(train_dir)
+        shutil.rmtree(full_train_dir)
         shutil.rmtree(result_dir)
         
