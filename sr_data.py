@@ -1,5 +1,7 @@
 from sr_imports import *
 from torchvision import transforms
+from cachetools import cached, cachedmethod, LRUCache
+import operator
 
 class SRDataset(tdata.Dataset):
     """Dataset specific for Super Resolution.
@@ -10,33 +12,30 @@ class SRDataset(tdata.Dataset):
         labels : paths for label images.
     """
 
-    def __init__(self, root_dir):
-        self.root_dir = root_dir
+    def __init__(self, train_dir):
+        self.train_dir = train_dir
+        self.labels_dir = os.path.join(self.train_dir, "labels")
 
-        files = os.listdir(root_dir)
+        self.examples_p = [os.path.join(self.train_dir, name) for name in os.listdir(self.train_dir)] 
+        self.examples_p.sort()
+        self.labels_p = [os.path.join(self.labels_dir, name) for name in os.listdir(self.labels_dir)] 
+        self.labels_p.sort()
 
-        # get examples path
-        example_re = re.compile(r'\d*x\d*.png')
-        self.examples = [os.path.join(root_dir, name) for name in list(filter(example_re.match, files))]
-        self.examples.sort()
-
-        # get labels path
-        label_re = re.compile(r'\d{4}.png')
-        self.labels = [os.path.join(root_dir, name) for name in list(filter(label_re.match, files))]
-        self.labels.sort()
+        self.cache = LRUCache(len(self.examples_p))
 
     def __len__(self):
-        return len(self.examples)
+        return len(self.examples_p)
 
+    @cachedmethod(operator.attrgetter('cache'))
     def __getitem__(self, index):
         """ 
         Returns:
             array: a 2d array of tensors [sample_t, label_t]
         """
-
-        # load image (think about a cache system)
-        e = Image.open(self.examples[index])
-        l = Image.open(self.labels[index])
+       
+        # load image from disk
+        e = Image.open(self.examples_p[index])
+        l = Image.open(self.labels_p[index])
 
         # print(e.format, e.size, e.mode)
         # print(l.format, l.size, l.mode)
