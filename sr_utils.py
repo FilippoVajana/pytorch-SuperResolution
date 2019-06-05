@@ -72,4 +72,21 @@ def show_results(res, display=True):
     if display == True : plt.show()
 
     return fig
+
+
+
+def get_device(device):
+    d = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") \
+            if device == None \
+            else torch.device("cuda:{}".format(device))
     
+    print("Selected Device: ", d)
+    return d
+    
+def create_directory(path):
+    try:  
+        os.mkdir(path)
+    except OSError:  
+        print ("Creation of the directory %s failed" % path)
+    else:  
+        print ("Successfully created the directory %s " % path)
