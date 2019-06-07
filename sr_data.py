@@ -2,6 +2,10 @@ from sr_imports import *
 from torchvision import transforms
 from cachetools import cached, cachedmethod, LRUCache
 import operator
+from skimage import color, io
+from skimage.transform import rescale
+import scipy
+
 
 class SRDataset(tdata.Dataset):
     """Dataset specific for Super Resolution.
@@ -16,7 +20,7 @@ class SRDataset(tdata.Dataset):
         self.train_dir = train_dir
         self.labels_dir = os.path.join(self.train_dir, "labels")
 
-        self.examples_p = [os.path.join(self.train_dir, name) for name in os.listdir(self.train_dir)] 
+        self.examples_p = [os.path.join(self.train_dir, name) for name in os.listdir(self.train_dir) if name != "labels"] 
         self.examples_p.sort()
         self.labels_p = [os.path.join(self.labels_dir, name) for name in os.listdir(self.labels_dir)] 
         self.labels_p.sort()
@@ -32,17 +36,29 @@ class SRDataset(tdata.Dataset):
         Returns:
             array: a 2d array of tensors [sample_t, label_t]
         """
-       
+
+        print(index, self.examples_p[index])
+
+
         # load image from disk
         e = Image.open(self.examples_p[index])
         l = Image.open(self.labels_p[index])
+        
+        # RGB to YCbCr
+        # e = color.rgb2ycbcr(e)
+        # l = color.rgb2ycbcr(l)
 
-        # print(e.format, e.size, e.mode)
-        # print(l.format, l.size, l.mode)
+        # upscale example
+        # e = rescale(e, 2, multichannel=True, anti_aliasing=True)
+
+
+        print("data example", e.size)
+        print("data label", l.size)
 
         # define data transformations
-        example_t = tvision.transforms.Compose([transforms.ToTensor()])
-        label_t = tvision.transforms.Compose([transforms.ToTensor()])
+        data_tr = [transforms.Resize((l.size[0], l.size[1])), transforms.CenterCrop(512), transforms.ToTensor()]
+        example_t = tvision.transforms.Compose(data_tr)
+        label_t = tvision.transforms.Compose(data_tr)
 
         # print(example_t(e).shape)
         # print(label_t(l).shape)
