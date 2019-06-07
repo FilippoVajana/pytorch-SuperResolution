@@ -54,8 +54,10 @@ def show_results(res, display=True):
     toPil = tvision.transforms.ToPILImage()
     origin, output, label = res
 
+    print(origin.shape, output.shape, label.shape)
+
     fig = plt.figure()
-    fig.set_size_inches(20, 5)    
+    fig.set_size_inches(30, 10)    
 
     ax1 = fig.add_subplot(rows, cols, 1)
     ax1.set_title("train image {}".format(origin.shape))
@@ -73,12 +75,12 @@ def show_results(res, display=True):
 
     return fig
 
-
-
 def get_device(device):
-    d = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") \
-            if device == None \
-            else torch.device("cuda:{}".format(device))
+    # d = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") \
+    #         if device == None \
+    #         else torch.device("cuda:{}".format(device))
+
+    d = torch.device("cpu") if device == None else torch.device("cuda:{}".format(device))
     
     print("Selected Device: ", d)
     return d

@@ -7,11 +7,12 @@ from sr_utils import *
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Super Resolution - Neural Network")
     parser.add_argument('-t', action='store_true', help='Train the model')
+    parser.add_argument('-sd', action='store_true', default=False, help='Use small train set')
     parser.add_argument('-s', action='store_true', help='Save prediction result')
     parser.add_argument('-e', type=int, action='store', help='Number of epoch')    
     parser.add_argument('-tc', action='store_true', help='Load model and continue the training')
     parser.add_argument('-clear', action='store_true', help='Remove used files')
-    parser.add_argument('-gpu', type=int, action='store', default=0, help='Select the gpu')
+    parser.add_argument('-gpu', type=int, action='store', default=None, help='Select the gpu')
     args = parser.parse_args()
 
 
@@ -38,16 +39,27 @@ if __name__ == "__main__":
     do_continue = args.tc
     train_epochs = args.e if args.e is not None else train_epochs
 
+
     ### init model
-    model = Upconv(train_img_size)
-    dev_count = torch.cuda.device_count()
+    model = SRCNN()
+
+
+    ### parallelization
+    # dev_count = torch.cuda.device_count()
     # if dev_count > 1:
     #     print("Let's use", dev_count, "GPUs!")
     #     model = nn.DataParallel(model, [1])
     
+
     # init data loader
-    dataset = SRDataset(full_train_dir)
-    loader = tdata.DataLoader(dataset, batch_size=10, shuffle=True)
+    dataset = None
+    if args.sd == True:
+        dataset = SRDataset(small_train_dir)
+    else:
+        dataset = SRDataset(full_train_dir)
+
+    loader = tdata.DataLoader(dataset, batch_size=4, shuffle=True)
+
 
     # train
     trainer = Trainer(model, device)
@@ -72,7 +84,7 @@ if __name__ == "__main__":
     toTensor = tvision.transforms.ToTensor()
     res_count = 5
     for idx, (e,l) in enumerate(dataset):    
-        original = Image.open(dataset.examples[idx])
+        original = Image.open(dataset.examples_p[idx])
         original = toTensor(original)
 
         # move model to cpu

@@ -8,6 +8,7 @@ class Trainer():
         print("Using {}".format(self.device))
         
         # set model
+        # self.model = model.double()
         self.model = model.to(self.device)
 
         # set default optimizer
@@ -41,8 +42,8 @@ class Trainer():
                 # forward
                 predictions = self.model(batch)
 
-                # print(predictions.shape)
-                # print(targets.shape)
+                # print("train prediction:", predictions.shape)
+                # print("train target:", targets.shape)
 
                 # calculate loss
                 t_loss = self.loss_fn(predictions, targets)
