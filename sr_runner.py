@@ -6,9 +6,9 @@ from sr_utils import *
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Super Resolution - Neural Network")
-    parser.add_argument('-t', action='store_true', help='Train the model')
-    parser.add_argument('-sd', action='store_true', default=False, help='Use small train set')
-    parser.add_argument('-s', action='store_true', help='Save prediction result')
+    parser.add_argument('-t', action='store_true', help='Train the model from scratch')
+    parser.add_argument('-small', action='store_true', default=False, help='Use small train set')
+    parser.add_argument('-save', action='store_true', help='Save prediction result')
     parser.add_argument('-e', type=int, action='store', help='Number of epoch')    
     parser.add_argument('-tc', action='store_true', help='Load model and continue the training')
     parser.add_argument('-clear', action='store_true', help='Remove used files')
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     
 
     ### load cli params
-    do_train = args.t
+    retrain = args.t
     do_continue = args.tc
     train_epochs = args.e if args.e is not None else train_epochs
 
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     # init data loader
     dataset = None
-    if args.sd == True:
+    if args.small == True:
         dataset = SRDataset(small_train_dir)
     else:
         dataset = SRDataset(full_train_dir)
@@ -63,13 +63,13 @@ if __name__ == "__main__":
 
     # train
     trainer = Trainer(model, device)
-    if do_train == True:
+    if retrain == True:
         print("Start training")
         trainer.train(train_epochs, loader, None)
         print("Saving model")
         torch.save(model.state_dict(), 'model.pt')
 
-    if do_train == False:
+    if retrain == False:
         print("Loading model")
         model.load_state_dict(torch.load('model.pt'))
         if do_continue == True:
@@ -77,6 +77,9 @@ if __name__ == "__main__":
             trainer.train(train_epochs, loader, None)
             print("Update model")
             torch.save(model.state_dict(), 'model.pt')
+
+    print("Train Loss: ", trainer.log_train.train_losses)
+    print("PSNR: ", trainer.log_train.psnr)
 
 
     # evaluate   
@@ -91,13 +94,11 @@ if __name__ == "__main__":
         model.cpu()
 
         output = model(e.unsqueeze(0))
-        output = output.squeeze(0).detach() 
-
-        # print(original.type(), output.type(), l.type())
+        output = output.squeeze(0).detach()
 
         fig = show_results((original, output, l), display=False)
 
-        if args.s:
+        if args.save:
             print("Saving result {}".format(idx))        
         fig.savefig(os.path.join(result_dir, "res_epochs{}_sample{}".format(train_epochs, idx)), dpi=250)
         res_count -= 1
@@ -106,6 +107,5 @@ if __name__ == "__main__":
     # clear
     if args.clear:
         print("Cleaning")
-        shutil.rmtree(full_train_dir)
         shutil.rmtree(result_dir)
         
