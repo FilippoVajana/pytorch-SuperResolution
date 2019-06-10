@@ -16,11 +16,11 @@ class SRDataset(tdata.Dataset):
         labels : paths for label images.
     """
 
-    def __init__(self, train_dir):
-        self.train_dir = train_dir
-        self.labels_dir = os.path.join(self.train_dir, "labels")
+    def __init__(self, data_dir):
+        self.data_dir = data_dir
+        self.labels_dir = os.path.join(self.data_dir, "labels")
 
-        self.examples_p = [os.path.join(self.train_dir, name) for name in os.listdir(self.train_dir) if name != "labels"] 
+        self.examples_p = [os.path.join(self.data_dir, name) for name in os.listdir(self.data_dir) if name != "labels"] 
         self.examples_p.sort()
         self.labels_p = [os.path.join(self.labels_dir, name) for name in os.listdir(self.labels_dir)] 
         self.labels_p.sort()
@@ -36,10 +36,7 @@ class SRDataset(tdata.Dataset):
         Returns:
             array: a 2d array of tensors [sample_t, label_t]
         """
-
-        print(index, self.examples_p[index])
-
-
+        
         # load image from disk
         e = Image.open(self.examples_p[index])
         l = Image.open(self.labels_p[index])
@@ -52,8 +49,8 @@ class SRDataset(tdata.Dataset):
         # e = rescale(e, 2, multichannel=True, anti_aliasing=True)
 
 
-        print("data example", e.size)
-        print("data label", l.size)
+        # print("data example", e.size)
+        # print("data label", l.size)
 
         # define data transformations
         data_tr = [transforms.Resize((l.size[0], l.size[1])), transforms.CenterCrop(512), transforms.ToTensor()]

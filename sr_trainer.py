@@ -1,38 +1,65 @@
 from sr_imports import *
 from sr_data import SRDataset
+import sr_utils
+from tqdm import tqdm
+
+class TrainLog():
+    def __init__(self):
+        self.train_losses = np.empty([1])
+        self.validation_losses = np.empty([1])
+        self.psnr = np.empty([1])
+
+        self.tmp_t_losses = np.empty([1])
+        self.tmp_v_losses = np.empty([1])
+        self.tmp_psnr = np.empty([1])
+
+    def add_t_loss(self, value):
+        self.tmp_t_losses = np.append(self.tmp_t_losses, value.cpu().data.numpy())
+
+    def add_v_loss(self, value):
+        self.tmp_v_losses = np.append(self.tmp_v_losses, value.cpu().data.numpy())
+
+    def add_psnr(self, value):
+        self.tmp_psnr = np.append(self.tmp_psnr, value.cpu().data.numpy())
+    
+    def update_epoch(self):
+        self.train_losses = np.append(self.train_losses, np.mean(self.tmp_t_losses))
+        self.validation_losses = np.append(self.validation_losses, np.mean(self.tmp_v_losses))
+        self.psnr = np.append(self.psnr, np.mean(self.tmp_psnr))
+
+        self.tmp_t_losses = np.empty([1])
+        self.tmp_v_losses = np.empty([1])
+        self.tmp_psnr = np.empty([1])
+
 
 class Trainer():
     def __init__(self, model, device):
-        # set gpu device        
         self.device = device
         print("Using {}".format(self.device))
         
         # set model
-        # self.model = model.double()
-        self.model = model.to(self.device)
+        self.model = model.to(device)
 
         # set default optimizer
-        # self.optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
-        self.optimizer = torch.optim.Adam(model.parameters())
+        lr = 0.01
+        self.optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size = 1, gamma=0.9)
 
         # set default loss function
         self.loss_fn = torch.nn.MSELoss()
+
+        # define log objects
+        self.log_train = TrainLog()
     
     def train(self, n_epochs = 10, train_loader = None, validation_loader = None):  
-        train_loss = {}
-        validation_loss = {}  
-        count = 0
         # loop    
         for epoch in range(n_epochs):
-            print("Epoch {}/{}".format(epoch + 1, n_epochs))
+            tqdm.write("Epoch: {}".format(epoch + 1))
+
             # train loop
             self.model.train()
-            train_loss[epoch] = list()
-            for batch, targets in train_loader:
-                count += train_loader.batch_size
-                print("\texamples: {}/{}".format(count, len(train_loader.dataset)*n_epochs))
-                # print(batch.shape)
-                # move to device
+            for batch, targets in tqdm(train_loader):
+                # move data to device
                 batch = batch.to(self.device)
                 targets = targets.to(self.device)
 
@@ -42,11 +69,9 @@ class Trainer():
                 # forward
                 predictions = self.model(batch)
 
-                # print("train prediction:", predictions.shape)
-                # print("train target:", targets.shape)
-
-                # calculate loss
+                # compute loss
                 t_loss = self.loss_fn(predictions, targets)
+                # tqdm.write(str(t_loss.item()))
 
                 # backpropagation and gradients computation
                 t_loss.backward()
@@ -55,30 +80,41 @@ class Trainer():
                 self.optimizer.step()
 
                 # save training loss
-                train_loss[epoch].append(t_loss.item())
+                self.log_train.add_t_loss(t_loss)
 
+                # compute psnr
+                for b,t in zip(batch, targets):
+                    psnr = sr_utils.psnr(t, b)
+                    self.log_train.add_psnr(psnr)
+
+            # update learning rate
+            self.scheduler.step()
             # validation loop
-            if validation_loader == None:
-                continue
+            if validation_loader != None:
+                self.model.eval()
+                validation_loss[epoch] = list()
+                with torch.no_grad():
+                    for batch, targets in validation_loader:
+                        # move to device
+                        batch = batch.to(self.device)
+                        targets = targets.to(self.device)
 
-            self.model.eval()
-            validation_loss[epoch] = list()
-            with torch.no_grad():
-                for batch, targets in validation_loader:
-                    # move to device
-                    batch = batch.to(self.device)
-                    targets = targets.to(self.device)
+                        # forward
+                        predictions = self.model(batch)
 
-                    # forward
-                    predictions = self.model(batch)
+                        # compute loss
+                        v_loss = self.loss_fn(predictions, targets)
 
-                    # calculate loss
-                    v_loss = self.loss_fn(predictions, targets)
+                        # save validation loss
+                        self.log_train.add_v_loss(v_loss)
 
-                    # save validation loss
-                    validation_loss[epoch].append(v_loss)
+                        # compute psnr
+                        for b,t in batch,targets:
+                            psnr = sr_utils.psnr(t, b)
+                            self.log_train.add_psnr(psnr)
             
-        return train_loss, validation_loss
+            # tqdm.write("Update log")
+            self.log_train.update_epoch()
 
     def test(self, test_loader = None):        
         self.model.eval()
