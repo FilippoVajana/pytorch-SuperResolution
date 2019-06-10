@@ -54,8 +54,6 @@ def show_results(res, display=True):
     toPil = tvision.transforms.ToPILImage()
     origin, output, label = res
 
-    print(origin.shape, output.shape, label.shape)
-
     fig = plt.figure()
     fig.set_size_inches(30, 10)    
 
@@ -92,3 +90,24 @@ def create_directory(path):
         print ("Creation of the directory %s failed" % path)
     else:  
         print ("Successfully created the directory %s " % path)
+
+
+def mse(original, result):
+    mse_3 = F.mse_loss(result, original)
+    return mse_3
+
+
+def psnr(original, result):
+    max_i = torch.tensor(1).float()
+    m = mse(original, result)
+    psnr = (20 * torch.log10(max_i)) - (10 * torch.log10(m))
+    return psnr
+
+
+if __name__ == "__main__":
+    size = 5
+    a = torch.rand((3,size,size))
+    b = torch.rand((3,size,size))
+
+    mse(a,b)
+    psnr(a,b)
