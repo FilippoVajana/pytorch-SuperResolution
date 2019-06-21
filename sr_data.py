@@ -61,10 +61,6 @@ class SRDataset(tdata.Dataset):
         # print(label_t(l).shape)
 
         return [example_t(e), label_t(l)]
-
-    def split(self, train_frac = .8):
-        l = [int(len(self) * train_frac), int(len(self) - len(self) * train_frac)]
-        ds = tdata.random_split(self, l)
         
 
 
