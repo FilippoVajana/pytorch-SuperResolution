@@ -1,2 +1,3 @@
 # pytorch-SuperResolution
-A neural network for a Single Frame Super Resolution task.
+
+Multiple convolutional neural network models for Single Frame Super Resolution tasks.
