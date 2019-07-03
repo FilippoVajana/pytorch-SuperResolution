@@ -45,9 +45,12 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
 
 def show_results(res, display=True):
     """
-    Show model output compared with source and label images.\\    
-    Args:
-        res (original, output, label): A tuple of three Pytorch Tensor images.
+    Show model output compared with source and label images.
+
+    Parameters
+    ----------
+        res : (original, output, label)
+              A tuple of three Pytorch Tensor images.
     """
     cols = 3
     rows = int(len(res) / cols)
@@ -73,35 +76,24 @@ def show_results(res, display=True):
 
     return fig
 
-def get_device(device):
-    # d = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") \
-    #         if device == None \
-    #         else torch.device("cuda:{}".format(device))
-
+def get_device(device=None):
     d = torch.device("cpu") if device == None else torch.device("cuda:{}".format(device))
     
     print("Selected Device: ", d)
     return d
+
+def create_folder(root, name=None):
+    if name != None:
+        root = os.path.join(root, name)
+
+    try:
+        os.mkdir(root)
+    except OSError:
+        print("Creation of the directory %s failed" % root)
+    else:
+        print("Successfully created the directory %s " % root)
     
-def create_directory(path):
-    try:  
-        os.mkdir(path)
-    except OSError:  
-        print ("Creation of the directory %s failed" % path)
-    else:  
-        print ("Successfully created the directory %s " % path)
-
-
-def mse(original, result):
-    mse_3 = F.mse_loss(result, original)
-    return mse_3
-
-
-def psnr(original, result):
-    max_i = torch.tensor(1).float()
-    m = mse(original, result)
-    psnr = (20 * torch.log10(max_i)) - (10 * torch.log10(m))
-    return psnr
+    return root
 
 
 if __name__ == "__main__":

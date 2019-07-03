@@ -3,35 +3,6 @@ from sr_data import SRDataset
 import sr_utils
 from tqdm import tqdm
 
-class TrainLog():
-    def __init__(self):
-        self.train_losses = np.empty([1])
-        self.validation_losses = np.empty([1])
-        self.psnr = np.empty([1])
-
-        self.tmp_t_losses = np.empty([1])
-        self.tmp_v_losses = np.empty([1])
-        self.tmp_psnr = np.empty([1])
-
-    def add_t_loss(self, value):
-        self.tmp_t_losses = np.append(self.tmp_t_losses, value.cpu().data.numpy())
-
-    def add_v_loss(self, value):
-        self.tmp_v_losses = np.append(self.tmp_v_losses, value.cpu().data.numpy())
-
-    def add_psnr(self, value):
-        self.tmp_psnr = np.append(self.tmp_psnr, value.cpu().data.numpy())
-    
-    def update_epoch(self):
-        self.train_losses = np.append(self.train_losses, np.mean(self.tmp_t_losses))
-        self.validation_losses = np.append(self.validation_losses, np.mean(self.tmp_v_losses))
-        self.psnr = np.append(self.psnr, np.mean(self.tmp_psnr))
-
-        self.tmp_t_losses = np.empty([1])
-        self.tmp_v_losses = np.empty([1])
-        self.tmp_psnr = np.empty([1])
-
-
 class Trainer():
     def __init__(self, model, device):
         self.device = device
