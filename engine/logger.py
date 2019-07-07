@@ -1,7 +1,11 @@
 class Logger():
-    def __init__(self):
+    def __init__(self, metrics=None):
         self.metrics = {}
         self.metrics_data = {}
+        
+        if metrics != None:
+            for name, fn in metrics:
+                self.attach_metric(name, fn)
         
 
     def attach_metric(self, metric_name="", metric_function=lambda x: x):
