@@ -27,6 +27,8 @@ class Trainer():
         """
         Starts the train-validation loop.
         """
+        if train_dataloader == None :
+            raise Exception("Invalid train dataloader.")
 
         self.train_log = Logger([("t_loss", lambda x: x)])
         self.validation_log = Logger([("v_loss", lambda x: x)])
@@ -43,10 +45,12 @@ class Trainer():
             self.scheduler.step()
 
             # validation
+            if validation_dataloader == None : continue
             self.model.eval()
-            for batch in tqdm(validation_dataloader):
-                self.__validate_batch(batch)
-        pass
+            with torch.no_grad():
+                for batch in tqdm(validation_dataloader):
+                    self.__validate_batch(batch)
+        
 
 
     def __train_batch(self, batch):
@@ -82,5 +86,17 @@ class Trainer():
         """
         Validation loop for a batch.
         """
-        pass
+        for examples, targets in batch:
+            # move data to device
+            examples = examples.to(self.device)
+            targets = targets.to(self.device)
+
+            # forward
+            predictions = self.model(examples)
+
+            # compute loss
+            loss = self.loss_fn(predictions, targets)
+
+            # log validation loss
+            self.validation_log.add_value("v_loss", loss)
 

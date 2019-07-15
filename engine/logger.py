@@ -10,7 +10,7 @@ class Logger():
 
     def attach_metric(self, metric_name="", metric_function=lambda x: x):
         """
-        Adds a new metric.
+        Adds a new metric to the logger.
         """
 
         if self.metrics.__contains__(metric_name):
@@ -25,7 +25,7 @@ class Logger():
 
     def add_value(self, metric_name, value):
         """
-        Append metric value.
+        Append the value to the specified metric.
         """
         if self.metrics.__contains__(metric_name) == False:
             raise Exception("Invalid metric.")
