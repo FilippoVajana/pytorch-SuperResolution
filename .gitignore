@@ -129,6 +129,6 @@ dmypy.json
 # !.vscode/launch.json
 # !.vscode/extensions.json
 
-data/
+data/div2k/
 model.pt
 notes.md
