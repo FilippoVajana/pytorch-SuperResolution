@@ -132,3 +132,4 @@ dmypy.json
 data/div2k/
 model.pt
 notes.md
+sync_*
