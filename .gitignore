@@ -132,5 +132,5 @@ dmypy.json
 data/div2k/
 model.pt
 notes.md
-sync_*
 runconfig.json
+sync_*.sh
