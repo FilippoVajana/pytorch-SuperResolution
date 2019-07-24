@@ -20,7 +20,7 @@ class Trainer():
         self.loss_fn = torch.nn.MSELoss()
 
         # define log objects
-        self.log_train = TrainLog()
+        # self.log_train = TrainLog()
     
     def train(self, n_epochs = 10, train_loader = None, validation_loader = None):  
         # loop    
@@ -51,12 +51,12 @@ class Trainer():
                 self.optimizer.step()
 
                 # save training loss
-                self.log_train.add_t_loss(t_loss)
+                # self.log_train.add_t_loss(t_loss)
 
                 # compute psnr
                 for b,t in zip(batch, targets):
                     psnr = sr_utils.psnr(t, b)
-                    self.log_train.add_psnr(psnr)
+                    # self.log_train.add_psnr(psnr)
 
             # update learning rate
             self.scheduler.step()
@@ -77,15 +77,15 @@ class Trainer():
                         v_loss = self.loss_fn(predictions, targets)
 
                         # save validation loss
-                        self.log_train.add_v_loss(v_loss)
+                        # self.log_train.add_v_loss(v_loss)
 
                         # compute psnr
                         for b,t in batch,targets:
                             psnr = sr_utils.psnr(t, b)
-                            self.log_train.add_psnr(psnr)
+                            # self.log_train.add_psnr(psnr)
             
             # tqdm.write("Update log")
-            self.log_train.update_epoch()
+            # self.log_train.update_epoch()
 
     def test(self, test_loader = None):        
         self.model.eval()
