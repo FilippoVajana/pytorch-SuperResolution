@@ -1,6 +1,6 @@
 from sr_imports import *
 from engine.logger import Logger
-import tqdm
+from tqdm import tqdm
 
 class Trainer():
     def __init__(self, model, device):
@@ -23,10 +23,11 @@ class Trainer():
         self.validation_log = None
 
     
-    def run_train(self, epochs = 0, train_dataloader=None, validation_dataloader=None):
+    def run(self, epochs = 0, train_dataloader=None, validation_dataloader=None):
         """
         Starts the train-validation loop.
         """
+
         if train_dataloader == None :
             raise Exception("Invalid train dataloader.")
 
@@ -39,6 +40,8 @@ class Trainer():
             # train
             self.model.train()
             for batch in tqdm(train_dataloader):
+                # print(batch)
+                # print(type(batch))
                 self.__train_batch(batch)
 
             # update learning rate
@@ -56,29 +59,32 @@ class Trainer():
     def __train_batch(self, batch):
         """
         Train loop for a batch.
-        """
-        for examples, labels in batch:            
-            # move data to device
-            examples = examples.to(self.device)
-            targets = targets.to(self.device)
+        """                 
 
-            # reset gradient computation
-            self.optimizer.zero_grad()
+        examples, targets = batch     
 
-            # forward
-            predictions = self.model(examples)
+        # move data to device
+        examples = examples.to(self.device)
+        targets = targets.to(self.device)
 
-            # compute loss
-            loss = self.loss_fn(predictions, targets)
+        # reset gradient computation
+        self.optimizer.zero_grad()
 
-            # backpropagation and gradients computation
-            loss.backward()
+        # forward
+        predictions = self.model(examples)
 
-            # update weights
-            self.optimizer.step()
+        # compute loss
+        loss = self.loss_fn(predictions, targets)
 
-            # log training loss
-            self.train_log.add_value("t_loss", loss)
+        # backpropagation and gradients computation
+        loss.backward()
+
+        # update weights
+        self.optimizer.step()
+
+        # log training loss
+        self.train_log.add_value("t_loss", loss)
+            
 
 
 
@@ -86,17 +92,19 @@ class Trainer():
         """
         Validation loop for a batch.
         """
-        for examples, targets in batch:
-            # move data to device
-            examples = examples.to(self.device)
-            targets = targets.to(self.device)
+        
+        examples, targets = batch
 
-            # forward
-            predictions = self.model(examples)
+        # move data to device
+        examples = examples.to(self.device)
+        targets = targets.to(self.device)
 
-            # compute loss
-            loss = self.loss_fn(predictions, targets)
+        # forward
+        predictions = self.model(examples)
 
-            # log validation loss
-            self.validation_log.add_value("v_loss", loss)
+        # compute loss
+        loss = self.loss_fn(predictions, targets)
+
+        # log validation loss
+        self.validation_log.add_value("v_loss", loss)
 
