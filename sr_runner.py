@@ -1,8 +1,8 @@
 from sr_imports import *
-from sr_data import SRDataset
-from sr_model import *
+from data.dataset import SRDataset
+from models import SRCNN
 from sr_trainer import Trainer
-from sr_utils import *
+from utilities import *
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Super Resolution - Neural Network")
@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
 
     ### init folders
-    create_directory(result_dir)
+    create_folder(result_dir)
     
 
     ### load cli params
@@ -41,8 +41,7 @@ if __name__ == "__main__":
 
 
     ### init model
-    model = SRCNN()
-
+    model = SRCNN.SRCNN()
 
     ### parallelization
     # dev_count = torch.cuda.device_count()
