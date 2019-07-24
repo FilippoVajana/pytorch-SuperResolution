@@ -76,8 +76,9 @@ def show_results(res, display=True):
 
     return fig
 
-def get_device(device=None):
-    d = torch.device("cpu") if device == None else torch.device("cuda:{}".format(device))
+# TODO: check pytorch version, maybe there is no CUDA
+def get_device(dev=None):
+    d = torch.device("cpu") if dev == None else torch.device("cuda:{}".format(dev))
     
     print("Selected Device: ", d)
     return d
@@ -94,12 +95,3 @@ def create_folder(root, name=None):
         print("Successfully created the directory %s " % root)
     
     return root
-
-
-if __name__ == "__main__":
-    size = 5
-    a = torch.rand((3,size,size))
-    b = torch.rand((3,size,size))
-
-    mse(a,b)
-    psnr(a,b)
