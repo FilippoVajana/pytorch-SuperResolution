@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 
 from PIL import Image
 
+import jsonpickle
+
 # System libs
 import os
 import re

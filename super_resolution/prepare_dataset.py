@@ -1,19 +1,6 @@
-import os
-import re
-import PIL.Image as Image
+from super_resolution import *
+from super_resolution.utilities.utils import create_folder
 
-def create_folder(root, name=None):
-    if name != None:
-        root = os.path.join(root, name)
-
-    try:
-        os.mkdir(root)
-    except OSError:
-        print("Creation of the directory %s failed" % root)
-    else:
-        print("Successfully created the directory %s " % root)
-    
-    return root
 
 def is_valid(path):
     if not os.path.isdir(path) : return False

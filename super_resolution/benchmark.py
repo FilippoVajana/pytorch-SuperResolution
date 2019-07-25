@@ -1,9 +1,9 @@
-from models.SRCNN import SRCNN
-from engine import model_trainer
+from super_resolution import *
+from super_resolution.models.SRCNN import SRCNN
+from super_resolution.engine import model_trainer
+from super_resolution.utilities.utils import create_folder
+import super_resolution.data.dataset as data
 
-from utilities.utils import create_folder
-import data.dataset as data
-import jsonpickle
 
 class BenchmarkConfig(object):
     JSON_NAME = "runconfig.json"
