@@ -1,8 +1,8 @@
-from super_resolution import *
-from super_resolution.models.SRCNN import SRCNN
-from super_resolution.engine import model_trainer
-from super_resolution.utilities.utils import create_folder
-import super_resolution.data.dataset as data
+from imports import *
+from models.SRCNN import SRCNN
+from engine import model_trainer
+from utilities.utils import create_folder
+import data.dataset as data
 
 
 class BenchmarkConfig(object):

@@ -1,4 +1,4 @@
-from sr_imports import *
+from imports import *
 
 class Upconv(nn.Module): 
     def __init__(self, base_size):

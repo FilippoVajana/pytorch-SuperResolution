@@ -1,4 +1,4 @@
-from sr_imports import *
+from imports import *
 from torchvision import transforms
 from cachetools import cached, cachedmethod, LRUCache
 import operator

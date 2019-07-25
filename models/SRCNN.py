@@ -1,4 +1,4 @@
-from sr_imports import *
+from imports import *
 
 class SRCNN(nn.Module):
     def __init__(self):

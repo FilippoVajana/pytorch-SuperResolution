@@ -1,5 +1,5 @@
-from super_resolution import *
-from super_resolution.utilities.utils import create_folder
+from imports import *
+from utilities.utils import create_folder
 
 
 def is_valid(path):

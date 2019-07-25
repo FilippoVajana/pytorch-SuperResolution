@@ -1,4 +1,4 @@
-from sr_imports import *
+from imports import *
 
 def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor = 2):
     print("Building train data")

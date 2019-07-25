@@ -1,19 +1,19 @@
-from super_resolution import *
-from super_resolution.benchmark import BenchmarkConfig, Benchmark
-from super_resolution.utilities import utils
+from imports import *
+from benchmark import BenchmarkConfig, Benchmark
+from utilities import utils
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Super Resolution with DNN")    
+    parser = argparse.ArgumentParser(description="Super Resolution with DNN") 
     parser.add_argument('-cfg', type=str, action='store', default='runconfig.json', help='Load configuration')
     parser.add_argument('-gpu', type=int, action='store', default=None, help='Use GPU number i')
     args = parser.parse_args()
 
     # working directory
     wd = os.getcwd()
-    cfg_path = wd
-
+    
     # check if config file exists
+    cfg_path = wd
     if os.path.isfile(os.path.join(wd, args.cfg)) == False:
         # create empty config        
         cfg_path = BenchmarkConfig.save_empty(wd)
