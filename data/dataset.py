@@ -8,14 +8,6 @@ import scipy
 
 
 class SRDataset(tdata.Dataset):
-    """Dataset specific for Super Resolution.
-    
-    Attributes:
-        root_dir: images source directory.
-        examples: paths for example images.
-        labels : paths for label images.
-    """
-
     def __init__(self, data_dir):
         self.data_dir = data_dir
         self.labels_dir = os.path.join(self.data_dir, "labels")

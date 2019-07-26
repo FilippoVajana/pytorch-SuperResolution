@@ -96,7 +96,7 @@ class Benchmark():
         # logging.info("Creating test set.")
         # test_ds = data.SRDataset(self.cfg.test_data)
 
-        # 3. init dataloaders
+        # init dataloaders
         logging.info("Creating train dataloader.")
         train_dl = tdata.DataLoader(train_ds, self.cfg.batch_size, shuffle=True)
 
