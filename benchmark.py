@@ -13,7 +13,6 @@ class BenchmarkConfig(object):
         self.device = 'cpu'
 
         # data
-        self.use_small_dataset = False
         self.train_data = ''
         self.validation_data = ''
         self.test_data = ''
@@ -86,10 +85,7 @@ class Benchmark():
         logging.info("Creating run directory.")   
         run_dir = create_folder(root, run_id)
 
-        # prepare data
-        # 1. preprocessing --> list of functions
-        # 2. init datasets
-        # TODO: check small-dataset opt
+        # prepare data 
         logging.info("Creating train set.")
         train_ds = data.SRDataset(self.cfg.train_data)
 
@@ -111,8 +107,6 @@ class Benchmark():
         # test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
         
         # init model runner
-        # 1. metrics callbacks
-        # 2. execution observer
         
 
         # run model
