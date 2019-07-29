@@ -73,7 +73,7 @@ class DatasetBuilder():
         examples, labels = self.__get_data(data_folder)  
 
         # split data
-        split_idx = int(len(examples) * ratio)
+        split_idx = int(len(examples) * ratio) - 1
 
         train_data = {
             'examples' : examples[0 : split_idx],
