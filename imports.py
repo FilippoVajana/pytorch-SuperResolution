@@ -1,7 +1,7 @@
 # External libs
 import torch
 import torch.nn as nn
-import torchvision as tvision
+import torchvision
 import torch.utils.data as tdata
 import torch.nn.functional as F
 
@@ -18,3 +18,6 @@ import os
 import re
 import argparse
 import logging
+
+# Project modules
+from models.SRCNN import SRCNN
