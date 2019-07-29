@@ -1,5 +1,5 @@
 from imports import *
-from engine import model_trainer
+from engine import model_trainer, model_tester
 from utilities.utils import create_folder
 import data.dataset as data
 
@@ -93,23 +93,15 @@ class Benchmark():
 
         logging.info("Creating validation dataloader.")
         validation_dl = tdata.DataLoader(validation_ds, self.cfg.batch_size, shuffle=False)
-
-        test_ds = None
-        test_dl = None     
-        if os.path.isdir(self.cfg.test_data):
-            logging.info("Creating test set.")
-            test_ds = builder.build(self.cfg.test_data)
-
-            logging.info("Creating test dataloader.")
-            test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
-                
+ 
         
         # init model
         logging.info("Initializing SRCNN model.")
         model = SRCNN()
 
 
-        # train model
+        # TRAIN PHASE
+        #############
         logging.info("Initializing model trainer.")
         trainer = model_trainer.Trainer(model, self.cfg.device)
 
@@ -120,11 +112,28 @@ class Benchmark():
         # get results (save + visualize)
         logging.debug(trainer.train_log)
         logging.debug(trainer.validation_log)
-        
 
         # save model
         logging.info("Saving model.")
         torch.save(model.state_dict(), os.path.join(run_dir, 'model.pt'))
+
+        
+        # TEST PHASE
+        #############
+        test_ds = None
+        test_dl = None     
+        if os.path.isdir(self.cfg.test_data):
+            logging.info("Creating test set.")
+            test_ds = builder.build(self.cfg.test_data)
+
+            logging.info("Creating test dataloader.")
+            test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
+
+        logging.info("Initializing model tester.")
+        tester = model_tester.Tester(model)
+        
+
+        
 
 
         # cleanup tmp data
