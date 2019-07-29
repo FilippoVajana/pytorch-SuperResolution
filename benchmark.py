@@ -1,5 +1,4 @@
 from imports import *
-from models.SRCNN import SRCNN
 from engine import model_trainer
 from utilities.utils import create_folder
 import data.dataset as data
@@ -8,13 +7,12 @@ import data.dataset as data
 class BenchmarkConfig(object):
     JSON_NAME = "runconfig.json"
 
-    def __init__(self):
+    def __init__(self):        
         # options
         self.device = 'cpu'
 
         # data
-        self.train_data = ''
-        self.validation_data = ''
+        self.train_data = ''        
         self.test_data = ''
 
         # train options
@@ -57,9 +55,6 @@ class BenchmarkConfig(object):
 
 class Benchmark():
     def __init__(self, configuration=None):
-        # set logging
-        logging.basicConfig(level=logging.DEBUG)     
-        
         # set configuration
         if configuration is None : 
             logging.warning("Running with default configuration.")
@@ -71,7 +66,7 @@ class Benchmark():
         # get run id as a time string
         import datetime as dt
         time = dt.datetime.now()
-        id = time.strftime("%H_%M_%d_%m") # Hour_Minute_Day_Month
+        id = time.strftime("%d%m_%H%M") # Hour_Minute_Day_Month
         return id       
     
     def run(self):
@@ -81,50 +76,58 @@ class Benchmark():
         logging.info("Get run ID.")
         run_id = self.__get_id()
 
+
         # init run folders     
         logging.info("Creating run directory.")   
-        run_dir = create_folder(root, run_id)
+        run_dir = create_folder(os.path.join(root, 'benchmarks'), run_id)
 
-        # prepare data 
-        logging.info("Creating train set.")
-        train_ds = data.SRDataset(self.cfg.train_data)
 
-        # TODO: check and create
-        logging.info("Creating validation set.")
-        validation_ds = data.SRDataset(self.cfg.validation_data)
+        # prepare datasets and dataloader
+        builder = data.DatasetBuilder()      
 
-        # logging.info("Creating test set.")
-        # test_ds = data.SRDataset(self.cfg.test_data)
+        logging.info("Creating train and validation sets.")
+        train_ds , validation_ds = builder.build_splitted(self.cfg.train_data)
 
-        # init dataloaders
         logging.info("Creating train dataloader.")
         train_dl = tdata.DataLoader(train_ds, self.cfg.batch_size, shuffle=True)
 
         logging.info("Creating validation dataloader.")
         validation_dl = tdata.DataLoader(validation_ds, self.cfg.batch_size, shuffle=False)
 
-        # logging.info("Creating test dataloader.")
-        # test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
-        
-        # init model runner
-        
+        test_ds = None
+        test_dl = None     
+        if os.path.isdir(self.cfg.test_data):
+            logging.info("Creating test set.")
+            test_ds = builder.build(self.cfg.test_data)
 
-        # run model
-        # 1. train + validation        
-        # 2. test
+            logging.info("Creating test dataloader.")
+            test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
+                
+        
+        # init model
         logging.info("Initializing SRCNN model.")
-        model = SRCNN.SRCNN()
+        model = SRCNN()
+
+
+        # train model
         logging.info("Initializing model trainer.")
         trainer = model_trainer.Trainer(model, self.cfg.device)
 
         logging.info("Starting train phase.")
         trainer.run(self.cfg.epochs, train_dl, validation_dl)
 
+
         # get results (save + visualize)
         logging.debug(trainer.train_log)
         logging.debug(trainer.validation_log)
         
-        # clean tmp data
+
+        # save model
+        logging.info("Saving model.")
+        torch.save(model.state_dict(), os.path.join(run_dir, 'model.pt'))
+
+
+        # cleanup tmp data
 
 
 if __name__ == "__main__":
