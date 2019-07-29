@@ -35,8 +35,7 @@ if __name__ == '__main__':
     if args.gpu != None:
         device = utils.get_device(args.gpu)
         cfg.device = device
-    print(cfg.device)
-
+        
 
     # run benchmark
     bench = Benchmark(cfg)

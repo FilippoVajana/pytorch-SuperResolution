@@ -53,8 +53,8 @@ def show_results(res, display=True):
               A tuple of three Pytorch Tensor images.
     """
     cols = 3
-    rows = int(len(res) / cols)
-    toPil = tvision.transforms.ToPILImage()
+    rows = 1
+    toPil = torchvision.transforms.ToPILImage()
     origin, output, label = res
 
     fig = plt.figure()
@@ -77,7 +77,7 @@ def show_results(res, display=True):
     return fig
 
 # TODO: check pytorch version, maybe there is no CUDA
-def get_device(dev=None):
+def get_device(dev=None):    
     d = torch.device("cpu") if dev == None else torch.device("cuda:{}".format(dev))
     
     print("Selected Device: ", d)
