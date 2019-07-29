@@ -5,7 +5,6 @@ from tqdm import tqdm
 class Trainer():
     def __init__(self, model, device):
         self.device = device
-        print("Using {}".format(self.device))
         
         # set model
         self.model = model.to(device)
@@ -37,7 +36,7 @@ class Trainer():
         for epoch in range(epochs):
             tqdm.write("Epoch: {}".format(epoch + 1))
 
-            # train
+            # train loop
             self.model.train()
             for batch in tqdm(train_dataloader):
                 # print(batch)
@@ -47,18 +46,19 @@ class Trainer():
             # update learning rate
             self.scheduler.step()
 
-            # validation
-            if validation_dataloader == None : continue
+            # validation loop
+            if validation_dataloader == None : 
+                continue
+
             self.model.eval()
             with torch.no_grad():
                 for batch in tqdm(validation_dataloader):
                     self.__validate_batch(batch)
         
 
-
     def __train_batch(self, batch):
         """
-        Train loop for a batch.
+        Train work for a batch.
         """                 
 
         examples, targets = batch     
@@ -86,11 +86,9 @@ class Trainer():
         self.train_log.add_value("t_loss", loss)
             
 
-
-
     def __validate_batch(self, batch):
         """
-        Validation loop for a batch.
+        Validation work for a batch.
         """
         
         examples, targets = batch
