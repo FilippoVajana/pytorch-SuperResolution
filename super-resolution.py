@@ -9,8 +9,14 @@ if __name__ == '__main__':
     parser.add_argument('-gpu', type=int, action='store', default=None, help='Use GPU number i')
     args = parser.parse_args()
 
+
+    # set logging
+    logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s]  %(levelname)s: %(message)s', datefmt='%I:%M:%S')  
+
+
     # working directory
     wd = os.getcwd()
+
     
     # check if config file exists
     cfg_path = wd
@@ -20,14 +26,17 @@ if __name__ == '__main__':
     else:
         cfg_path = os.path.join(wd, args.cfg)
 
+
     # load config
     cfg = BenchmarkConfig.load(cfg_path)
+
 
     # fix config
     if args.gpu != None:
         device = utils.get_device(args.gpu)
         cfg.device = device
     print(cfg.device)
+
 
     # run benchmark
     bench = Benchmark(cfg)

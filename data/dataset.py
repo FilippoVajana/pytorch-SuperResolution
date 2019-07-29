@@ -31,6 +31,7 @@ class DatasetBuilder():
 
         return examples, labels
 
+
     def build(self, data_folder):
         """
         Build a SRDataset from folder.
@@ -72,7 +73,7 @@ class DatasetBuilder():
         examples, labels = self.__get_data(data_folder)  
 
         # split data
-        split_idx = int(len(examples * ratio))
+        split_idx = int(len(examples) * ratio)
 
         train_data = {
             'examples' : examples[0 : split_idx],
@@ -120,12 +121,14 @@ class SRDataset(tdata.Dataset):
         """
         
         # load image from disk
-        e = Image.open(self.examples[index])
         l = Image.open(self.labels[index])
+        e = Image.open(self.examples[index])\
+            .resize((l.size[0], l.size[1]), Image.BICUBIC)
+        
 
         # define data transformations
         data_tr = [transforms.ToTensor()]
-        example_t = tvision.transforms.Compose(data_tr)
-        label_t = tvision.transforms.Compose(data_tr)
+        example_t = torchvision.transforms.Compose(data_tr)
+        label_t = torchvision.transforms.Compose(data_tr)
 
         return [example_t(e), label_t(l)]
