@@ -92,7 +92,7 @@ class Benchmark():
         train_dl = tdata.DataLoader(train_ds, self.cfg.batch_size, shuffle=True)
 
         logging.info("Creating validation dataloader.")
-        validation_dl = tdata.DataLoader(validation_ds, self.cfg.batch_size, shuffle=False)
+        validation_dl = tdata.DataLoader(validation_ds, 1, shuffle=False)
  
         
         # init model

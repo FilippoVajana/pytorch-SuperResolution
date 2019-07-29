@@ -5,7 +5,7 @@ from tqdm import tqdm
 class Trainer():
     def __init__(self, model, device):
         self.device = device
-        
+
         # set model
         self.model = model.to(device)
 
@@ -32,7 +32,16 @@ class Trainer():
 
         self.train_log = Logger([("t_loss", lambda x: x)])
         self.validation_log = Logger([("v_loss", lambda x: x)])
+
+        #########
+        # DEBUG #
+        ######### 
+        logging.warning(f"Epochs: {epochs}")
+        logging.warning(f"Batches: {len(train_dataloader)}")
+        logging.warning(f"Batch size: {train_dataloader.batch_size}")
+
         
+
         for epoch in range(epochs):
             tqdm.write("Epoch: {}".format(epoch + 1))
 
