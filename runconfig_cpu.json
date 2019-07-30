@@ -1,0 +1,10 @@
+{
+    "batch_size": 2,
+    "device": "cpu",
+    "epochs": 5,
+    "load_model": false,
+    "py/object": "benchmark.BenchmarkConfig",
+    "save_output": false,
+    "test_data": "./data/div2k/test/2x_bicubic_small",
+    "train_data": "./data/div2k/train/2x_bicubic_small"
+}
