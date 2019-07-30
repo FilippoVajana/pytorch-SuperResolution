@@ -30,8 +30,9 @@ class Trainer():
         if train_dataloader == None :
             raise Exception("Invalid train dataloader.")
 
-        self.train_log = Logger([("t_loss", lambda x: x)])
-        self.validation_log = Logger([("v_loss", lambda x: x)])
+        self.log = Logger()
+        self.log.add_metric("t_loss")
+        self.log.add_metric("v_loss")
 
         #########
         # DEBUG #
@@ -44,25 +45,37 @@ class Trainer():
 
         for epoch in range(epochs):
             tqdm.write("Epoch: {}".format(epoch + 1))
-
+            
             # train loop
+            t_loss = list()
+
             self.model.train()
             for batch in tqdm(train_dataloader):
-                # print(batch)
-                # print(type(batch))
-                self.__train_batch(batch)
+                loss = self.__train_batch(batch)
+                t_loss.append(loss)
+                
+            # update train log
+            self.log.add_batch("t_loss", (epoch, t_loss))           
+
 
             # update learning rate
             self.scheduler.step()
-
-            # validation loop
+            
             if validation_dataloader == None : 
                 continue
+
+
+            # validation loop
+            v_loss = list()
 
             self.model.eval()
             with torch.no_grad():
                 for batch in tqdm(validation_dataloader):
-                    self.__validate_batch(batch)
+                    loss = self.__validate_batch(batch)
+                    v_loss.append(loss)
+            
+            # update validation log
+            self.log.add_batch("v_loss", (epoch, v_loss))
         
 
     def __train_batch(self, batch):
@@ -91,9 +104,8 @@ class Trainer():
         # update weights
         self.optimizer.step()
 
-        # log training loss
-        self.train_log.add_value("t_loss", loss)
-            
+        return loss
+
 
     def __validate_batch(self, batch):
         """
@@ -113,5 +125,5 @@ class Trainer():
         loss = self.loss_fn(predictions, targets)
 
         # log validation loss
-        self.validation_log.add_value("v_loss", loss)
+        return loss
 
