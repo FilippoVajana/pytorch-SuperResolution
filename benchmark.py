@@ -110,8 +110,7 @@ class Benchmark():
 
 
         # get results (save + visualize)
-        logging.debug(trainer.train_log)
-        logging.debug(trainer.validation_log)
+        logging.debug(trainer.log)
 
         # save model
         logging.info("Saving model.")
@@ -130,11 +129,9 @@ class Benchmark():
             test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
 
         logging.info("Initializing model tester.")
-        tester = model_tester.Tester(model)
+        tester = model_tester.Tester(model)        
+        tester.test_sample(test_dl, 3)
         
-
-        
-
 
         # cleanup tmp data
 

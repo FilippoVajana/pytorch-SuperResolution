@@ -1,4 +1,5 @@
-import statistics
+import torch as torch
+
 
 class Logger():
     def __init__(self):
@@ -49,7 +50,7 @@ class Logger():
     def add_batch(self, name, batch):        
         def batch_process():
             epoch, data = batch
-            return (epoch, statistics.mean(data))
+            return (epoch, torch.mean(torch.stack(data)))
         
         if self.is_valid_key(name) == False:
             raise Exception("Invalid metric.")
