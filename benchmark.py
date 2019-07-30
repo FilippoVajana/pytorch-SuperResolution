@@ -1,6 +1,7 @@
 from imports import *
 from engine import model_trainer, model_tester
 from utilities.utils import create_folder
+from benchmarks.utils import collect_result_imgs
 import data.dataset as data
 
 
@@ -130,17 +131,7 @@ class Benchmark():
 
         logging.info("Initializing model tester.")
         tester = model_tester.Tester(model)        
-        tester.test_sample(test_dl, 3)
-        
+        # tester.test(test_dl)
 
-        # cleanup tmp data
-
-
-if __name__ == "__main__":
-    # mock config
-    config = BenchmarkConfig()
-    config_path = config.save(os.getcwd())
-
-    # mock run
-    b = Benchmark(config_path)
-    b.run()
+        # collect results
+        collect_result_imgs(model, test_dl, save_path=run_dir)

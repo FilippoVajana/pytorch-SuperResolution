@@ -76,12 +76,13 @@ def show_results(res, display=True):
 
     return fig
 
-# TODO: check pytorch version, maybe there is no CUDA
+
 def get_device(dev=None):    
     d = torch.device("cpu") if dev == None else torch.device("cuda:{}".format(dev))
     
     print("Selected Device: ", d)
     return d
+
 
 def create_folder(root, name=None):
     if name != None:
