@@ -9,7 +9,7 @@ class Metrics():
 
 
     def psnr(self, example, prediction):
-        max_i = torch.tensor(1).float()
-        m = mse(example, prediction)
-        psnr = (20 * torch.log10(max_i)) - (10 * torch.log10(m))
+        max_i = torch.Tensor(1).float()
+        m = self.mse(example, prediction)
+        psnr = (20 * max_i.log10()) - (10 * m.log10())
         return psnr
