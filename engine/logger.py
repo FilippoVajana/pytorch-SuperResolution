@@ -1,46 +1,69 @@
-class Logger():
-    def __init__(self, metrics=None):
-        self.metrics = {}
-        self.metrics_data = {}
-        
-        if metrics != None:
-            for name, fn in metrics:
-                self.attach_metric(name, fn)
-        
+import statistics
 
-    def attach_metric(self, metric_name="", metric_function=lambda x: x):
+class Logger():
+    def __init__(self):
+        self.data = {}
+
+
+    def is_valid_key(self, key):
+        """
+        Checks if the key is valid.
+        
+        Arguments:
+
+            key {str} -- Key to check
+        
+        Returns:
+
+            bool -- True if the key is valid
+        """
+
+        if key in self.data:
+            return True
+        else:
+            return False
+
+
+    def add_metric(self, name):
         """
         Adds a new metric to the logger.
         """
 
-        if self.metrics.__contains__(metric_name):
+        if self.is_valid_key(name):
             raise Exception("Already existing metric.")  
 
-        # add metric
-        self.metrics[metric_name] = metric_function
-        
-        # create metric state
-        self.metrics_data[metric_name] = list()
+        self.data[name] = list()
 
 
-    def add_value(self, metric_name, value):
+    def add_value(self, name, value):
         """
         Append the value to the specified metric.
         """
-        if self.metrics.__contains__(metric_name) == False:
+
+        if self.is_valid_key(name) == False:
             raise Exception("Invalid metric.")
         
-        self.metrics_data[metric_name].append(value)
+        self.data[name].append(value)
+
+
+    def add_batch(self, name, batch):        
+        def batch_process():
+            epoch, data = batch
+            return (epoch, statistics.mean(data))
+        
+        if self.is_valid_key(name) == False:
+            raise Exception("Invalid metric.")
+
+        res = batch_process()
+
+        self.data[name].append(res)
             
 
-    def get_value(self, metric_name):
+    def get_value(self, name):
         """
         Gets the computed value of the specified metric.
         """
-        if self.metrics.__contains__(metric_name) == False:
+        if self.is_valid_key(name) == False:
             raise Exception("Invalid metric.")
 
-        data = self.metrics_data[metric_name]
-        func = self.metrics[metric_name]
-        res = func(data)
-        return res
+        return self.data[name]
