@@ -134,4 +134,4 @@ model.pt
 notes.md
 runconfig.json
 sync_*.sh
-benchmarks/*
+benchmarks/*/
