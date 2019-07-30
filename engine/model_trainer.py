@@ -18,8 +18,9 @@ class Trainer():
         self.loss_fn = torch.nn.MSELoss()
 
         # define log objects
-        self.train_log = None
-        self.validation_log = None
+        self.log = Logger()
+        self.log.add_metric("t_loss")
+        self.log.add_metric("v_loss")
 
     
     def run(self, epochs = 0, train_dataloader=None, validation_dataloader=None):
@@ -29,10 +30,7 @@ class Trainer():
 
         if train_dataloader == None :
             raise Exception("Invalid train dataloader.")
-
-        self.log = Logger()
-        self.log.add_metric("t_loss")
-        self.log.add_metric("v_loss")
+    
 
         #########
         # DEBUG #
@@ -53,7 +51,7 @@ class Trainer():
             for batch in tqdm(train_dataloader):
                 loss = self.__train_batch(batch)
                 t_loss.append(loss)
-                
+
             # update train log
             self.log.add_batch("t_loss", (epoch, t_loss))           
 
