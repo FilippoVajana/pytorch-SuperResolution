@@ -130,8 +130,8 @@ class Benchmark():
             test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
 
         logging.info("Initializing model tester.")
-        tester = model_tester.Tester(model)        
-        # tester.test(test_dl)
+        tester = model_tester.Tester(model, self.cfg.device)        
+        tester.test(test_dl)
 
         # collect results
         collect_result_imgs(model, test_dl, save_path=run_dir)

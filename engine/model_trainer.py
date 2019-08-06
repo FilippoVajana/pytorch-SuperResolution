@@ -41,14 +41,14 @@ class Trainer():
 
         
 
-        for epoch in range(epochs):
-            tqdm.write("Epoch: {}".format(epoch + 1))
+        for epoch in tqdm(range(epochs)):
+            # tqdm.write("Epoch: {}".format(epoch + 1))
             
             # train loop
             t_loss = list()
 
             self.model.train()
-            for batch in tqdm(train_dataloader):
+            for batch in train_dataloader:
                 loss = self.__train_batch(batch)
                 t_loss.append(loss)
 
@@ -68,7 +68,7 @@ class Trainer():
 
             self.model.eval()
             with torch.no_grad():
-                for batch in tqdm(validation_dataloader):
+                for batch in validation_dataloader:
                     loss = self.__validate_batch(batch)
                     v_loss.append(loss)
             

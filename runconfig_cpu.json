@@ -1,7 +1,7 @@
 {
     "batch_size": 5,
     "device": "cpu",
-    "epochs": 20,
+    "epochs": 80,
     "load_model": false,
     "py/object": "benchmark.BenchmarkConfig",
     "save_output": false,
