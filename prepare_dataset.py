@@ -1,5 +1,6 @@
 from imports import *
 from utilities.utils import create_folder
+from tqdm import tqdm
 
 
 def is_valid(path):
@@ -17,7 +18,7 @@ def resize(data, destination, size):
         size {int} -- Final image size
     """
 
-    for d in data:
+    for d in tqdm(data):
         Image.open(d)\
             .resize((size, size), Image.BICUBIC)\
                 .convert('L')\
@@ -37,13 +38,6 @@ def init_data(source_dir, dest_name, examples_num = 0, img_size = 0, img_mult = 
     ex_dir = source_dir
     lab_dir = os.path.join(ex_dir, "labels")
 
-    # create data folders
-    dest_path = os.path.join(ex_dir, os.pardir)
-    logger.info("Creating examples destination folder.")
-    dest_ex = create_folder(dest_path, dest_name)
-    logger.info("Creating labels destination folder.")
-    dest_lab = create_folder(dest_ex, "labels")
-
     # get files
     img_regex = re.compile(r'.png')
     logger.info("Getting examples images.") 
@@ -59,21 +53,32 @@ def init_data(source_dir, dest_name, examples_num = 0, img_size = 0, img_mult = 
     labels.sort()
     
     # compute examples range
+    if examples_num == 0:
+        examples_num = len(examples)
     file_num = min(examples_num, len(examples))
+
+    # create data folders
+    dest_path = os.path.join(ex_dir, os.pardir)
+    logger.info("Creating examples destination folder.")
+    dest_ex = create_folder(dest_path, dest_name)
+    logger.info("Creating labels destination folder.")
+    dest_lab = create_folder(dest_ex, "labels")
         
     # process examples
     logger.info("Resizing examples.")
+    tqdm.write("Resizing examples...")
     resize(examples[:file_num], dest_ex, img_size)
 
     # process labels
     logger.info("Resizing labels.")
+    tqdm.write("Resizing labels...")
     resize(labels[:file_num], dest_lab, img_size*img_mult)
 
 
 
 if __name__ == "__main__":   
-    parser = argparse.ArgumentParser(description="Data preparing script")
-    parser.add_argument('-dn', help='New dataset folder name', type=str, action='store', default='2x_bicubic_custom')
+    parser = argparse.ArgumentParser(description="Script to prepare the dataset for the SR instance.")
+    parser.add_argument('-dn', help='New dataset folder name', type=str, action='store', default='2x_bicubic_32x32_all')
     parser.add_argument('-dl', help='Number of examples', type=int, action='store', default=0)
     parser.add_argument('-src', help='Data source', type=str, action='store', default='./data/div2k/train/2x_bicubic')
     parser.add_argument('-s', help='Example image size', type=int, action='store', default=32)
