@@ -58,7 +58,7 @@ def init_data(source_dir, dest_name, examples_num = 0, img_size = 0, img_mult = 
     file_num = min(examples_num, len(examples))
 
     # create data folders
-    dest_path = os.path.join(ex_dir, os.pardir)
+    dest_path = os.path.join(ex_dir, os.pardir, os.pardir)
     logger.info("Creating examples destination folder.")
     dest_ex = create_folder(dest_path, dest_name)
     logger.info("Creating labels destination folder.")
