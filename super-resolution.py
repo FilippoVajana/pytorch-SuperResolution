@@ -5,13 +5,13 @@ from utilities import utils
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Super Resolution with DNN") 
-    parser.add_argument('-cfg', type=str, action='store', default='runconfig.json', help='Load configuration')
+    parser.add_argument('-cfg', type=str, action='store', default='runconfig_cpu.json', help='Load configuration')
     parser.add_argument('-gpu', type=int, action='store', default=None, help='Use GPU number i')
     args = parser.parse_args()
 
 
     # set logging
-    logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s]  %(levelname)s: %(message)s', datefmt='%I:%M:%S')  
+    logging.basicConfig(level=logging.WARNING, format='[%(asctime)s]  %(levelname)s: %(message)s', datefmt='%I:%M:%S')  
 
 
     # working directory
@@ -29,13 +29,6 @@ if __name__ == '__main__':
 
     # load config
     cfg = BenchmarkConfig.load(cfg_path)
-
-
-    # fix config
-    if args.gpu != None:
-        device = utils.get_device(args.gpu)
-        cfg.device = device
-        
 
     # run benchmark
     bench = Benchmark(cfg)
