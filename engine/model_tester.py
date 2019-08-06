@@ -6,8 +6,8 @@ from tqdm import tqdm
 
 
 class Tester():
-    def __init__(self, model):
-        self.model = model.to("cpu")
+    def __init__(self, model, device):
+        self.model = model.to(device)
         self.loss_fn = torch.nn.MSELoss()
         self.quality = Metrics()
 
