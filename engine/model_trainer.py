@@ -1,6 +1,7 @@
 from imports import *
 from engine.logger import Logger
 from tqdm import tqdm
+from data.metrics import Metrics
 
 class Trainer():
     def __init__(self, model, device):
@@ -18,10 +19,8 @@ class Trainer():
         self.loss_fn = torch.nn.MSELoss()
 
         # define log objects
-        self.log = Logger()
-        self.log.add_metric("t_loss")
-        self.log.add_metric("v_loss")
-
+        self.log = Logger("train_log", ["t_loss", "t_psnr", "v_loss", "v_psnr"])
+        
     
     def run(self, epochs = 0, train_dataloader=None, validation_dataloader=None):
         """
@@ -41,39 +40,44 @@ class Trainer():
 
         
 
-        for epoch in tqdm(range(epochs)):
-            # tqdm.write("Epoch: {}".format(epoch + 1))
-            
+        for epoch in tqdm(range(epochs)):            
             # train loop
-            t_loss = list()
+            tmp_loss = torch.zeros(len(train_dataloader), device=self.device)
+            tmp_psnr = torch.zeros(len(train_dataloader), device=self.device)
 
             self.model.train()
-            for batch in train_dataloader:
-                loss = self.__train_batch(batch)
-                t_loss.append(loss)
+            for idx, batch in enumerate(train_dataloader):
+                b_loss, b_psnr = self.__train_batch(batch)
+                tmp_loss[idx] = b_loss
+                tmp_psnr[idx] = b_psnr
 
             # update train log
-            self.log.add_batch("t_loss", (epoch, t_loss))           
+            self.log.add("t_loss", tmp_loss.mean())  
+            self.log.add("t_psnr", tmp_psnr.mean())     
 
 
             # update learning rate
             self.scheduler.step()
-            
+
+            # validation loop
             if validation_dataloader == None : 
                 continue
 
-
-            # validation loop
-            v_loss = list()
+            tmp_loss = torch.zeros(len(validation_dataloader), device=self.device)
+            tmp_psnr = torch.zeros(len(validation_dataloader), device=self.device)
 
             self.model.eval()
             with torch.no_grad():
-                for batch in validation_dataloader:
-                    loss = self.__validate_batch(batch)
-                    v_loss.append(loss)
+                for idx, batch in enumerate(validation_dataloader):
+                    b_loss, b_psnr = self.__validate_batch(batch)
+                    tmp_loss[idx] = b_loss
+                    tmp_psnr[idx] = b_psnr
             
             # update validation log
-            self.log.add_batch("v_loss", (epoch, v_loss))
+            self.log.add("v_loss", tmp_loss.mean())
+            self.log.add("v_psnr", tmp_psnr.mean())
+
+        return self.log.to_dataframe()
         
 
     def __train_batch(self, batch):
@@ -102,7 +106,10 @@ class Trainer():
         # update weights
         self.optimizer.step()
 
-        return loss
+        # compute psnr
+        psnr_t = torch.tensor([Metrics.psnr(targets[idx], p) for idx, p in enumerate(predictions)])
+
+        return loss.detach(), psnr_t.mean()
 
 
     def __validate_batch(self, batch):
@@ -122,6 +129,9 @@ class Trainer():
         # compute loss
         loss = self.loss_fn(predictions, targets)
 
-        # log validation loss
-        return loss
+        # compute psnr
+        psnr_t = torch.tensor([Metrics.psnr(targets[idx], p) for idx, p in enumerate(predictions)])
+
+        
+        return loss.detach(), psnr_t.mean()
 

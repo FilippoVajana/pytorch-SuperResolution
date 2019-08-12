@@ -2,6 +2,7 @@ from imports import *
 from data.metrics import Metrics
 import torchvision as torchvision
 
+# Result images
 
 def create_result_img(original, output, target):
     cols = 3
@@ -25,21 +26,18 @@ def create_result_img(original, output, target):
 
     return fig
 
-
 def save_result_img(fig, benchmark_dir, idx):
-    fig.savefig(os.path.join(benchmark_dir, f"output_img{idx}"), dpi=250)
-
+    fig.savefig(os.path.join(benchmark_dir, "images", f"output_img{idx}"), dpi=250)
 
 def display_result_img(fig):
     fig.show()
-
 
 def collect_result_imgs(model, test_dataloader = None, sample_count = 5, display = False, save = True, save_path = "./"):
     """
     Collects test results.
     
     Arguments:
-        model {[type]} -- [description]
+        model {SRCNN} -- The model
     
     Keyword Arguments:
         test_dataloader {DataLoader} -- Test data (default: {None})
@@ -49,7 +47,7 @@ def collect_result_imgs(model, test_dataloader = None, sample_count = 5, display
         save_path {str} -- Save path (default: {"./"})
     
     Raises:
-        Exception: [description]
+        Exception: For invalid data loader
     """
 
     if test_dataloader == None :
