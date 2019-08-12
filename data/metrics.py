@@ -1,15 +1,22 @@
 from imports import *
+from skimage.measure import compare_psnr
 
 
 class Metrics():
-
-    def mse(self, example, prediction):
-        mse_3 = F.mse_loss(prediction, example)
+    @staticmethod
+    def mse(target, prediction):
+        mse_3 = F.mse_loss(prediction, target)
         return mse_3
 
+    # @staticmethod
+    # def psnr(target, prediction):
+    #     max_i = torch.Tensor(1).float()
+    #     m = Metrics.mse(target, prediction)
+    #     psnr = 10 * torch.log10(max_i / m)
+    #     return psnr
 
-    def psnr(self, example, prediction):
-        max_i = torch.Tensor(1).float()
-        m = self.mse(example, prediction)
-        psnr = (20 * max_i.log10()) - (10 * m.log10())
-        return psnr
+    @staticmethod
+    def psnr(target, prediction):
+        t = target.data.numpy()
+        p = prediction.data.numpy()
+        return compare_psnr(t, p)
