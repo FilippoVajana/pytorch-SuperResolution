@@ -77,12 +77,6 @@ class Benchmark():
         logging.info("Get run ID.")
         run_id = self.__get_id()
 
-
-        # init run folders     
-        logging.info("Creating run directory.")   
-        run_dir = create_folder(os.path.join(root, 'benchmarks'), run_id)
-
-
         # prepare datasets and dataloader
         builder = data.DatasetBuilder()      
 
@@ -107,15 +101,7 @@ class Benchmark():
         trainer = model_trainer.Trainer(model, self.cfg.device)
 
         logging.info("Starting train phase.")
-        trainer.run(self.cfg.epochs, train_dl, validation_dl)
-
-
-        # get results (save + visualize)
-        logging.debug(trainer.log)
-
-        # save model
-        logging.info("Saving model.")
-        torch.save(model.state_dict(), os.path.join(run_dir, 'model.pt'))
+        df_train = trainer.run(self.cfg.epochs, train_dl, validation_dl)
 
         
         # TEST PHASE
@@ -131,7 +117,22 @@ class Benchmark():
 
         logging.info("Initializing model tester.")
         tester = model_tester.Tester(model, self.cfg.device)        
-        tester.test(test_dl)
+        df_test = tester.test(test_dl)
 
-        # collect results
-        collect_result_imgs(model, test_dl, save_path=run_dir)
+        
+
+        # save results
+        if self.cfg.save_output == True:
+            # init run folders     
+            logging.info("Creating run directory.")   
+            run_dir = create_folder(os.path.join(root, 'benchmarks'), run_id)
+
+            # save model
+            torch.save(model.state_dict(), os.path.join(run_dir, 'model.pt'))
+
+            # save log
+            df_train.save(os.path.join(run_dir, df_train.name))
+            df_test.save(os.path.join(run_dir, df_test.name))
+
+            # save test imgs sample            
+            collect_result_imgs(model, test_dl, save_path=run_dir)

@@ -12,9 +12,9 @@ class Logger():
 
     def add(self, key, value):
         self.data[key].append(value)
-
-    def to_dataframe(self):
+    
+    def save(self, path):
         df = pd.DataFrame.from_dict(self.data)
-        return df
+        df.to_csv(path)
         
     

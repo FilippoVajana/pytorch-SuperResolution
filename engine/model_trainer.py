@@ -77,7 +77,7 @@ class Trainer():
             self.log.add("v_loss", tmp_loss.mean())
             self.log.add("v_psnr", tmp_psnr.mean())
 
-        return self.log.to_dataframe()
+        return self.log
         
 
     def __train_batch(self, batch):

@@ -42,4 +42,4 @@ class Tester():
                 self.log.add("loss", loss)
                 self.log.add("psnr", psnr)
                 
-        return self.log.to_dataframe()
+        return self.log
