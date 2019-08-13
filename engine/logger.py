@@ -14,7 +14,7 @@ class Logger():
         self.data[key].append(value)
 
     def to_dataframe(self):
-        df = pd.DataFrame(self.data)
+        df = pd.DataFrame.from_dict(self.data)
         return df
         
     
