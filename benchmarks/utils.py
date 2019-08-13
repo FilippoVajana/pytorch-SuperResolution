@@ -1,9 +1,9 @@
 from imports import *
+from utilities.utils import create_folder
 from data.metrics import Metrics
 import torchvision as torchvision
 
 # Result images
-
 def create_result_img(original, output, target):
     cols = 3
     rows = 1
@@ -26,8 +26,8 @@ def create_result_img(original, output, target):
 
     return fig
 
-def save_result_img(fig, benchmark_dir, idx):
-    fig.savefig(os.path.join(benchmark_dir, "images", f"output_img{idx}"), dpi=250)
+def save_result_img(fig, path, idx):
+    fig.savefig(os.path.join(path, f"output_img{idx}"), dpi=250)
 
 def display_result_img(fig):
     fig.show()
@@ -82,5 +82,6 @@ def collect_result_imgs(model, test_dataloader = None, sample_count = 5, display
 
     if save:
         logging.info(f"Saving {len(results)} result images.")
+        path = create_folder(save_path, "images")
         for idx, fig in enumerate(results):
-            save_result_img(fig, save_path, idx)
+            save_result_img(fig, path, idx)
