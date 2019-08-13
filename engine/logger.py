@@ -11,7 +11,7 @@ class Logger():
             self.data[m] = list()
 
     def add(self, key, value):
-        self.data[key].append(value)
+        self.data[key].append(value.item())
     
     def save(self, path):
         df = pd.DataFrame.from_dict(self.data)
