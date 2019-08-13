@@ -7,20 +7,16 @@ from tqdm import tqdm
 
 class Tester():
     def __init__(self, model, device):
+        self.device = device
         self.model = model.to(device)
         self.loss_fn = torch.nn.MSELoss()
-        self.quality = Metrics()
 
-        self.log = Logger()
-        self.log.add_metric("test_loss")
-        self.log.add_metric("psnr")
+        self.log = Logger("test_log", ["loss", "psnr"])
+
 
     def test(self, test_dataloader = None):
         """
         Tests the trained model.
-        
-        Keyword Arguments:
-            test_dataloader {DataLoader} -- Test data (default: {None})
         """
 
         if test_dataloader == None :
@@ -31,13 +27,19 @@ class Tester():
             for data in tqdm(test_dataloader):
                 examples, targets = data
 
-                # predict
-                outputs = self.model(examples)
+                # move data to device                
+                examples = examples.to(self.device)
+                targets = targets.to(self.device)
 
-                # compute loss
-                loss = self.loss_fn(outputs, targets)
-                self.log.add_value("test_loss", loss)
+                # predict
+                predictions = self.model(examples)
+
+                # compute metrics
+                loss = self.loss_fn(predictions, targets)
+                psnr = torch.tensor([Metrics.psnr(targets[idx], p) for idx, p in enumerate(predictions)]).mean()
+
+                # update test log
+                self.log.add("loss", loss)
+                self.log.add("psnr", psnr)
                 
-                # compute psnr
-                for e, l in zip(outputs, targets):
-                    self.log.add_value("psnr", self.quality.psnr(e, l))
+        return self.log.to_dataframe()
