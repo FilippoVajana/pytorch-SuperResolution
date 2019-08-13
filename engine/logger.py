@@ -15,6 +15,6 @@ class Logger():
     
     def save(self, path):
         df = pd.DataFrame.from_dict(self.data)
-        df.to_csv(path)
+        df.to_excel(path)
         
     
