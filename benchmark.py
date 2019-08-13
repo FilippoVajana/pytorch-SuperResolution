@@ -131,8 +131,8 @@ class Benchmark():
             torch.save(model.state_dict(), os.path.join(run_dir, 'model.pt'))
 
             # save log
-            df_train.save(os.path.join(run_dir, df_train.name))
-            df_test.save(os.path.join(run_dir, df_test.name))
+            df_train.save(os.path.join(run_dir, f"{df_train.name}.csv"))
+            df_test.save(os.path.join(run_dir, f"{df_test.name}.csv"))
 
             # save test imgs sample            
             collect_result_imgs(model, test_dl, save_path=run_dir)
