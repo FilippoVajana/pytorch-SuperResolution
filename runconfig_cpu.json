@@ -1,7 +1,7 @@
 {
     "batch_size": 5,
     "device": "cpu",
-    "epochs": 10,
+    "epochs": 30,
     "py/object": "benchmark.BenchmarkConfig",
     "save_output": true,
     "test_data": "./data/div2k/test/2x_bicubic_32x32_25sample",
