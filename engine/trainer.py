@@ -18,6 +18,9 @@ class Trainer():
         # set default loss function
         self.loss_fn = torch.nn.MSELoss()
 
+        # save best model parameters
+        self.best_model = model.state_dict()
+
         # define log objects
         self.log = Logger("train_log", ["t_loss", "t_psnr", "v_loss", "v_psnr"])
         
@@ -39,6 +42,8 @@ class Trainer():
         logging.warning(f"Batch size: {train_dataloader.batch_size}")
 
         
+        max_psnr = 0
+
 
         for epoch in tqdm(range(epochs)):            
             # train loop
@@ -76,6 +81,10 @@ class Trainer():
             # update validation log
             self.log.add("v_loss", tmp_loss.mean())
             self.log.add("v_psnr", tmp_psnr.mean())
+
+            # save checkpoint
+            if tmp_psnr.mean() > max_psnr:
+                self.best_model = self.model.state_dict()
 
         return self.log
         
