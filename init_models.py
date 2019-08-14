@@ -1,15 +1,19 @@
 import jsonpickle
 import os
 import argparse
+import datetime as dt
+from models import SRCNN
+from utilities.utils import create_folder
+from engine.runner import Runner
 
 class ModelsConfig():
     def __init__(self):
         self.models = ["srcnn"] # list of models to init
-        self.device = "cpu" # device for training
-        self.epochs = 10 # train epochs
-        self.batch_size = 5 # train batch size
-        self.train_data = "" # path to train data folder
-        self.test_data = "" # path to test data folder
+        self.device = "cpu"     # device for training
+        self.epochs = 10        # train epochs
+        self.batch_size = 5     # train batch size
+        self.train_data = ""    # path to train data folder
+        self.test_data = ""     # path to test data folder
 
     def save(self):
         name = "modelsconfig.json"
@@ -29,5 +33,25 @@ class ModelsConfig():
 
 
 if __name__ == "__main__":
-    cfg = ModelsConfig()
-    cfg.save()
+    parser = argparse.ArgumentParser(description="Script to train and validate DNN models.")
+    parser.add_argument('-cfg', type=str, action='store', default='modelsconfig.json', help='Load configuration file.')
+    args = parser.parse_args()
+
+    # load config
+    config = ModelsConfig.load(args.cfg)
+
+    # models
+    MODELS = {"srcnn" : SRCNN.SRCNN()}
+
+    # create root dir
+    root = dt.datetime.now().strftime("%d%m_%H%M") # Hour_Minute_Day_Month
+    cwd = os.getcwd()
+    root = create_folder(os.path.join(cwd, 'benchmarks', root))
+
+    runner = Runner(config)
+    for m in config.models:
+        # create output folder
+        out_dir = create_folder(os.path.join(root, str(m)))
+
+        # call runner
+        runner.run(MODELS[m], out_dir)
