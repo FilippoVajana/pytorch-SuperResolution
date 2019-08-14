@@ -1,5 +1,5 @@
 from imports import *
-from engine import model_trainer, model_tester
+from engine import trainer, tester
 from utilities.utils import create_folder
 from benchmarks.utils import collect_result_imgs
 import data.dataset as data
@@ -98,7 +98,7 @@ class Benchmark():
         # TRAIN PHASE
         #############
         logging.info("Initializing model trainer.")
-        trainer = model_trainer.Trainer(model, self.cfg.device)
+        trainer = trainer.Trainer(model, self.cfg.device)
 
         logging.info("Starting train phase.")
         df_train = trainer.run(self.cfg.epochs, train_dl, validation_dl)
@@ -116,7 +116,7 @@ class Benchmark():
             test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
 
         logging.info("Initializing model tester.")
-        tester = model_tester.Tester(model, self.cfg.device)        
+        tester = tester.Tester(model, self.cfg.device)        
         df_test = tester.test(test_dl)
 
         
