@@ -26,7 +26,7 @@ class Runner():
         self.validation_dl = tdata.DataLoader(validation_ds, 1, shuffle=False) 
         self.test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
 
-    def build_report(self, model_name, min_psnr, max_psnr, tot_time):
+    def build_report(self, model_name, psnr, ssim, tot_time):
         report = configparser.ConfigParser()
         report['INFO'] = {
             'model' :           model_name,
@@ -36,8 +36,10 @@ class Runner():
             'train_data' :      len(self.train_dl.dataset),
             'validation_data' : len(self.validation_dl.dataset),
             'test_data' :       len(self.test_dl.dataset),
-            'min_psnr' :        min_psnr,
-            'max_psnr' :        max_psnr,
+            'min_psnr' :        np.min(psnr),
+            'max_psnr' :        np.max(psnr),
+            'min_ssim' :        np.min(ssim),
+            'max_ssim' :        np.max(ssim),
             'tot_time' :        tot_time
         }
 
@@ -69,8 +71,8 @@ class Runner():
         
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
-            psnr_min = min(df_test.data['psnr'])
-            psnr_max = max(df_test.data['psnr'])
-            report = self.build_report(model.__class__.__name__, psnr_min, psnr_max, cpu_time)
+            psnr = df_test.data['psnr']
+            ssim = df_test.data['ssim']
+            report = self.build_report(model.__class__.__name__, psnr, ssim, cpu_time)
             report.write(f)
         pass

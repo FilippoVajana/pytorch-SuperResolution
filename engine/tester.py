@@ -11,7 +11,7 @@ class Tester():
         self.model = model.to(device)
         self.loss_fn = torch.nn.MSELoss()
 
-        self.log = Logger("test_log", ["loss", "psnr"])
+        self.log = Logger("test_log", ["loss", "psnr", "ssim"])
 
 
     def test(self, test_dataloader = None):
@@ -37,9 +37,11 @@ class Tester():
                 # compute metrics
                 loss = self.loss_fn(predictions, targets)
                 psnr = torch.tensor([Metrics.psnr(targets[idx], p) for idx, p in enumerate(predictions)]).mean()
+                ssim = torch.tensor([Metrics.ssim(targets[idx], p) for idx, p in enumerate(predictions)]).mean()
 
                 # update test log
                 self.log.add("loss", loss)
                 self.log.add("psnr", psnr)
+                self.log.add("ssim", ssim)
                 
         return self.log

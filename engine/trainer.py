@@ -22,7 +22,7 @@ class Trainer():
         self.best_model = model.state_dict()
 
         # define log objects
-        self.log = Logger("train_log", ["t_loss", "t_psnr", "v_loss", "v_psnr"])
+        self.log = Logger("train_log", ["t_loss", "t_psnr", "t_ssim", "v_loss", "v_psnr", "v_ssim"])
         
     
     def run(self, epochs = 0, train_dataloader=None, validation_dataloader=None):
@@ -42,23 +42,25 @@ class Trainer():
         logging.warning(f"Batch size: {train_dataloader.batch_size}")
 
         
-        max_psnr = 0
-
+        max_psnr = 0 # used to save best model params
 
         for epoch in tqdm(range(epochs)):            
             # train loop
             tmp_loss = torch.zeros(len(train_dataloader), device=self.device)
             tmp_psnr = torch.zeros(len(train_dataloader), device=self.device)
+            tmp_ssim = torch.zeros(len(train_dataloader), device=self.device)
 
             self.model.train()
             for idx, batch in enumerate(train_dataloader):
-                b_loss, b_psnr = self.__train_batch(batch)
+                b_loss, b_psnr, b_ssim = self.__train_batch(batch)
                 tmp_loss[idx] = b_loss
                 tmp_psnr[idx] = b_psnr
+                tmp_ssim[idx] = b_ssim
 
             # update train log
             self.log.add("t_loss", tmp_loss.mean())  
             self.log.add("t_psnr", tmp_psnr.mean())     
+            self.log.add("t_ssim", tmp_ssim.mean())    
 
 
             # update learning rate
@@ -70,17 +72,20 @@ class Trainer():
 
             tmp_loss = torch.zeros(len(validation_dataloader), device=self.device)
             tmp_psnr = torch.zeros(len(validation_dataloader), device=self.device)
+            tmp_ssim = torch.zeros(len(validation_dataloader), device=self.device)
 
             self.model.eval()
             with torch.no_grad():
                 for idx, batch in enumerate(validation_dataloader):
-                    b_loss, b_psnr = self.__validate_batch(batch)
+                    b_loss, b_psnr, b_ssim = self.__validate_batch(batch)
                     tmp_loss[idx] = b_loss
                     tmp_psnr[idx] = b_psnr
+                    tmp_ssim[idx] = b_ssim
             
             # update validation log
             self.log.add("v_loss", tmp_loss.mean())
             self.log.add("v_psnr", tmp_psnr.mean())
+            self.log.add("v_ssim", tmp_ssim.mean())
 
             # save checkpoint
             if tmp_psnr.mean() > max_psnr:
@@ -115,10 +120,11 @@ class Trainer():
         # update weights
         self.optimizer.step()
 
-        # compute psnr
+        # compute quality
         psnr_t = torch.tensor([Metrics.psnr(targets[idx], p) for idx, p in enumerate(predictions)])
+        ssim_t = torch.tensor([Metrics.ssim(targets[idx], p) for idx, p in enumerate(predictions)])
 
-        return loss.detach(), psnr_t.mean()
+        return loss.detach(), psnr_t.mean(), ssim_t.mean()
 
 
     def __validate_batch(self, batch):
@@ -138,9 +144,9 @@ class Trainer():
         # compute loss
         loss = self.loss_fn(predictions, targets)
 
-        # compute psnr
+        # compute quality
         psnr_t = torch.tensor([Metrics.psnr(targets[idx], p) for idx, p in enumerate(predictions)])
-
+        ssim_t = torch.tensor([Metrics.ssim(targets[idx], p) for idx, p in enumerate(predictions)])
         
-        return loss.detach(), psnr_t.mean()
+        return loss.detach(), psnr_t.mean(), ssim_t.mean()
 
