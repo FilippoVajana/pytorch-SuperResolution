@@ -1,10 +1,8 @@
 from imports import *
 from torchvision import transforms
 from cachetools import cached, cachedmethod, LRUCache
+from skimage.io import imread
 import operator
-from skimage import color, io
-from skimage.transform import rescale
-import scipy
 
 
 class DatasetBuilder():
@@ -121,14 +119,12 @@ class SRDataset(tdata.Dataset):
         """
         
         # load image from disk
-        l = Image.open(self.labels[index])
-        e = Image.open(self.examples[index])\
-            .resize((l.size[0], l.size[1]), Image.BICUBIC)
+        l_img = imread(self.labels[index])
+        e_img = imread(self.examples[index])
         
-
         # define data transformations
         data_tr = [transforms.ToTensor()]
         example_t = torchvision.transforms.Compose(data_tr)
         label_t = torchvision.transforms.Compose(data_tr)
 
-        return [example_t(e), label_t(l)]
+        return [example_t(e_img), label_t(l_img)]
