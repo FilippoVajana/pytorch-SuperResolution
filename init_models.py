@@ -2,7 +2,7 @@ import jsonpickle
 import os
 import argparse
 import datetime as dt
-from models import SRCNN
+from models import SRCNN, EDSR
 from utilities.utils import create_folder
 from engine.runner import Runner
 
@@ -41,7 +41,10 @@ if __name__ == "__main__":
     config = ModelsConfig.load(args.cfg)
 
     # models
-    MODELS = {"srcnn" : SRCNN.SRCNN()}
+    MODELS = {
+        "srcnn" : SRCNN.SRCNN(),
+        "edsr" : EDSR.EDSR()
+        }
 
     # create root dir
     root = dt.datetime.now().strftime("%d%m_%H%M") # Hour_Minute_Day_Month
