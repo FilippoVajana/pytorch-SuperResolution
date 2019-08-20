@@ -53,8 +53,12 @@ if __name__ == "__main__":
 
     runner = Runner(config)
     for m in config.models:
+        print("##########")
+        print(str(m).upper())
+        print("##########")
+        
         # create output folder
         out_dir = create_folder(os.path.join(root, str(m)))
-
+        
         # call runner
         runner.run(MODELS[m], out_dir)
