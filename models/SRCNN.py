@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.nn.modules.upsampling import Upsample
 
 class SRCNN(nn.Module):
     def __init__(self):
@@ -9,6 +10,8 @@ class SRCNN(nn.Module):
         self.conv3 = nn.Conv2d(32, 1, kernel_size=5, padding=2)
 
     def forward(self, x):
+        scaler2x = Upsample(scale_factor=2, mode='bicubic', align_corners=False)
+        x = scaler2x(x)
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
         x = F.relu(self.conv3(x))
