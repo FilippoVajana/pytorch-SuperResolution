@@ -1,8 +1,9 @@
 {
     "batch_size": 5,
     "device": "cpu",
-    "epochs": 5,
+    "epochs": 30,
     "models": [        
+        "srcnn",
         "edsr"
     ],
     "py/object": "__main__.ModelsConfig",

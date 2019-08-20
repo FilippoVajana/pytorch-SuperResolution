@@ -23,7 +23,7 @@ class EDSR(nn.Module):
     def __init__(self):
         super(EDSR, self).__init__()
         self.conv_in = nn.Conv2d(in_channels=1, out_channels=64, kernel_size=9, stride=1, padding=4, bias=False)
-        self.residuals = self._resblocks(2)
+        self.residuals = self._resblocks(16)
         self.scaler2x = self._upsample2x()
         self.conv_out = nn.Conv2d(in_channels=64, out_channels=1, kernel_size=3, stride=1, padding=1, bias=False)
 
