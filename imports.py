@@ -21,3 +21,4 @@ import logging
 
 # Project modules
 from models.SRCNN import SRCNN
+from models.EDSR import EDSR

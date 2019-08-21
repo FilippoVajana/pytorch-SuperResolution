@@ -78,8 +78,8 @@ def init_data(source_dir, dest_name, examples_num = 0, img_size = 0, img_mult = 
 
 if __name__ == "__main__":   
     parser = argparse.ArgumentParser(description="Script to prepare the dataset for the SR instance.")
-    parser.add_argument('-dn', help='New dataset folder name', type=str, action='store', default='2x_bicubic_32x32_all')
-    parser.add_argument('-dl', help='Number of examples', type=int, action='store', default=0)
+    parser.add_argument('-dn', help='New dataset folder name', type=str, action='store', default='2x_bicubic_32x32_x')
+    parser.add_argument('-dl', help='Number of examples, 0=ALL', type=int, action='store', default=0)
     parser.add_argument('-src', help='Data source', type=str, action='store', default='./data/div2k/train/2x_bicubic')
     parser.add_argument('-s', help='Example image size', type=int, action='store', default=32)
     parser.add_argument('-im', help='Label image size multiplier', type=int, action='store', default=2)

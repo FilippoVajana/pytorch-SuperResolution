@@ -6,6 +6,7 @@ from models import SRCNN, EDSR
 from utilities.utils import create_folder
 from engine.runner import Runner
 
+
 class ModelsConfig():
     def __init__(self):
         self.models = ["srcnn"] # list of models to init
@@ -62,3 +63,4 @@ if __name__ == "__main__":
         
         # call runner
         runner.run(MODELS[m], out_dir)
+

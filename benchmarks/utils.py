@@ -3,6 +3,7 @@ from utilities.utils import create_folder
 from data.metrics import Metrics
 import torchvision as torchvision
 
+
 # Result images
 def create_result_img(original, output, target):
     cols = 3
@@ -17,7 +18,7 @@ def create_result_img(original, output, target):
     plt.imshow(toPil(original))
 
     ax1 = fig.add_subplot(rows, cols, 2)    
-    ax1.set_title(f"Model output (PSNR={Metrics().psnr(output, target).item()})")
+    ax1.set_title(f"Model output (PSNR={Metrics().psnr(output, target)}, SSIM={Metrics().ssim(output, target)})")
     plt.imshow(toPil(output))
 
     ax1 = fig.add_subplot(rows, cols, 3)
@@ -32,7 +33,7 @@ def save_result_img(fig, path, idx):
 def display_result_img(fig):
     fig.show()
 
-def collect_result_imgs(model, test_dataloader = None, sample_count = 5, display = False, save = True, save_path = "./"):
+def collect_result_imgs(model, dataloader = None, sample_count = 5, display = False, save = True, save_path = "./"):
     """
     Collects test results.
     
@@ -40,7 +41,7 @@ def collect_result_imgs(model, test_dataloader = None, sample_count = 5, display
         model {SRCNN} -- The model
     
     Keyword Arguments:
-        test_dataloader {DataLoader} -- Test data (default: {None})
+        dataloader {DataLoader} -- Test data (default: {None})
         sample_count {int} -- Number of samples (default: {5})
         display {bool} -- Show result images (default: {False})
         save {bool} -- Save result images (default: {True})
@@ -50,14 +51,14 @@ def collect_result_imgs(model, test_dataloader = None, sample_count = 5, display
         Exception: For invalid data loader
     """
 
-    if test_dataloader == None :
+    if dataloader == None :
         raise Exception("Invalid test dataloader.")
 
     results = list()
 
     model.eval()
     with torch.no_grad():
-        for idx, data in enumerate(test_dataloader):
+        for idx, data in enumerate(dataloader):
             if idx >= sample_count:
                 break
 
@@ -68,7 +69,7 @@ def collect_result_imgs(model, test_dataloader = None, sample_count = 5, display
 
             # original unscaled image
             toTensor = torchvision.transforms.ToTensor()
-            original = toTensor(Image.open(test_dataloader.dataset.examples[idx]))
+            original = toTensor(Image.open(dataloader.dataset.examples[idx]))
 
             # create result image
             logging.info("Creating result image.")

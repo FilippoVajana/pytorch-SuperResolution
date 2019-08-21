@@ -10,7 +10,6 @@ class ResidualBlock(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1, bias=False)
         self.conv2 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1, bias=False)
         
-
     def forward(self, x):
         identity = x        
         out = F.relu(self.conv1(x))
@@ -26,8 +25,6 @@ class EDSR(nn.Module):
         self.residuals = self._resblocks(16)
         self.scaler2x = self._upsample2x()
         self.conv_out = nn.Conv2d(in_channels=64, out_channels=1, kernel_size=3, stride=1, padding=1, bias=False)
-
-
 
     def forward(self, x):
         identity = x
