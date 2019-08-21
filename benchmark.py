@@ -91,17 +91,18 @@ class Benchmark():
  
         
         # init model
-        logging.info("Initializing SRCNN model.")
-        model = SRCNN()
-
+        # logging.info("Initializing SRCNN model.")
+        # model = SRCNN()
+        logging.info("Initializing EDSR model.")
+        model = EDSR()
 
         # TRAIN PHASE
         #############
         logging.info("Initializing model trainer.")
-        trainer = trainer.Trainer(model, self.cfg.device)
+        m_trainer = trainer.Trainer(model, self.cfg.device)
 
         logging.info("Starting train phase.")
-        df_train = trainer.run(self.cfg.epochs, train_dl, validation_dl)
+        df_train = m_trainer.run(self.cfg.epochs, train_dl, validation_dl)
 
         
         # TEST PHASE
@@ -116,8 +117,8 @@ class Benchmark():
             test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
 
         logging.info("Initializing model tester.")
-        tester = tester.Tester(model, self.cfg.device)        
-        df_test = tester.test(test_dl)
+        m_tester = tester.Tester(model, self.cfg.device)        
+        df_test = m_tester.test(test_dl)
 
         
 
