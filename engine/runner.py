@@ -4,7 +4,7 @@ import time
 from imports import *
 from data.dataset import *
 from engine import trainer, tester
-
+from benchmarks.utils import collect_result_imgs
 
 
 class Runner():
@@ -38,9 +38,11 @@ class Runner():
             'test_data' :       len(self.test_dl.dataset),
             'min_psnr' :        np.min(psnr),
             'max_psnr' :        np.max(psnr),
+            'avg_psnr' :        np.median(psnr),
             'min_ssim' :        np.min(ssim),
             'max_ssim' :        np.max(ssim),
-            'tot_time' :        tot_time
+            'avg_ssim' :        np.median(ssim),
+            'tot_time' :        tot_time / 60
         }
 
         return report
@@ -68,6 +70,8 @@ class Runner():
         # save model params
         torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.__class__.__name__}.pt"))
 
+        # save test images
+        collect_result_imgs(model, self.test_dl, 5, False, True, output_dir)
         
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
