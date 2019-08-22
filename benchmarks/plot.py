@@ -1,10 +1,9 @@
-from imports import *
-from utilities.utils import create_folder
-from data.metrics import Metrics
 import torchvision as torchvision
-
+from imports import *
+from data.metrics import Metrics
 from matplotlib.gridspec import *
 from skimage.io import imread
+
 
 def _set_metrics(axis, target, prediction):
         psnr = Metrics().psnr(target, prediction)
@@ -12,50 +11,40 @@ def _set_metrics(axis, target, prediction):
         s = "PSNR: {:2.2f}\nSSIM: {:2.2f}".format(psnr, ssim)
         axis.set_xlabel(s)
 
-def compare_models(model1, model2, name1="", name2="", images=[]):
-    figures = []    
+def plot_model_perf(model, source, target, show=False):
     toPIL = torchvision.transforms.ToPILImage()    
-        
-    for idx, (example, label) in enumerate(images):
-        # build plot figure
-        fig = plt.figure(constrained_layout=True)
-        gs = GridSpec(2, 2, figure=fig)
-            
-        # get models outputs
-        out1 = model1(example)
-        out2 = model2(example)
+    
+    # build plot figure
+    fig = plt.figure(constrained_layout=False)
+    gs = GridSpec(1, 3, figure=fig)   
 
-        # transform tensors to valid images
-        example_i = toPIL(example.squeeze())
-        label_i = toPIL(label.squeeze())
-        out1_i = toPIL(out1.squeeze())
-        out2_i = toPIL(out2.squeeze())
+    # get model output
+    out = model(source)  
 
-        # compose grid
-        ax1 = fig.add_subplot(gs[0,0])
-        ax1.set_title('Source')
-        ax1.imshow(example_i)
+    # transform tensors to valid images
+    source_i = toPIL(source.squeeze())
+    target_i = toPIL(target.squeeze())
+    out_i = toPIL(out.squeeze())
 
-        ax2 = fig.add_subplot(gs[1,0])
-        ax2.set_title(name1)
-        _set_metrics(ax2, label, out1)
-        ax2.imshow(out1_i)
+    # compose grid
+    ax1 = fig.add_subplot(gs[0])
+    ax1.set_title('Source')
+    ax1.imshow(source_i)
 
-        ax3 = fig.add_subplot(gs[1,1])
-        ax3.set_title(name2)
-        _set_metrics(ax3, label, out2)
-        ax3.imshow(out2_i)
+    ax2 = fig.add_subplot(gs[1])
+    ax2.set_title(model.__class__.__name__)
+    _set_metrics(ax2, target, out)
+    ax2.imshow(out_i)
+    
+    ax3 = fig.add_subplot(gs[2])
+    ax3.set_title('Ground Truth')
+    ax3.imshow(target_i)
 
-        ax4 = fig.add_subplot(gs[0,1])
-        ax4.set_title('Ground Truth')
-        ax4.imshow(label_i)
+    if show : plt.show()
 
-        plt.show()
+    return fig
 
-        return figures
-
-
-def compare_outputs(source, target, models=[]):
+def plot_models_comparison(source, target, models=[], show=False):
     toPIL = torchvision.transforms.ToPILImage()
 
     # build grids
@@ -102,6 +91,6 @@ def compare_outputs(source, target, models=[]):
     _set_metrics(ax5, target, out5)
     ax5.imshow(toPIL(out5.squeeze()))
 
-    plt.show()
+    if show : plt.show()
 
     return fig

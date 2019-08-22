@@ -47,7 +47,7 @@ class Runner():
 
         return report
 
-    def run(self, model, output_dir):
+    def run(self, model, output_dir, save=False):
         t_start = time.time()
 
         # train phase
@@ -71,42 +71,43 @@ class Runner():
         torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.__class__.__name__}.pt"))
 
         # save test images
-        # collect_result_imgs(model, self.test_dl, 5, False, True, output_dir)
-
-
-        from benchmarks import plot
-        ############
-        # DEBUG
-        # save comparison images
-        # from benchmarks.plot import compare_models
-        # images = []
-        # for e,l in self.test_dl:
-        #     if len(images) >= 3:
-        #         break
-        #     images.append((e,l))
-
-        # compare_models(model, model, "model1", "model2", images)
-        #############
-
-
-        ############
-        # DEBUG
-        # save comparison images 
-        count = 0  
-        for e,l in self.test_dl:
-            if count >= 1:
-                break
-            plot.compare_outputs(e, l, [model, model, model])
-            count += 1
-        #############
-
-
-
-
+        if save : collect_result_imgs(model, self.test_dl, 5, False, True, output_dir)
+        
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
             psnr = df_test.data['psnr']
             ssim = df_test.data['ssim']
             report = self.build_report(model.__class__.__name__, psnr, ssim, cpu_time)
             report.write(f)
-        pass
+
+            
+
+        # from benchmarks import plot
+        ############
+        # DEBUG
+        # save comparison images
+        # count = 0
+        # for e,l in self.test_dl:
+        #     if count >= 1:
+        #         break
+        #     plot.plot_model_perf(model, e, l, True)
+        #     count += 1
+        #############
+
+
+        ############
+        # DEBUG
+        # save comparison images 
+        # count = 0  
+        # for e,l in self.test_dl:
+        #     if count >= 1:
+        #         break
+        #     plot.plot_models_comparison(e, l, [model, model, model], True)
+        #     count += 1
+        #############
+
+
+
+
+        
+      
