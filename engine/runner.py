@@ -42,7 +42,7 @@ class Runner():
             'min_ssim' :        np.min(ssim),
             'max_ssim' :        np.max(ssim),
             'avg_ssim' :        np.median(ssim),
-            'tot_time' :        tot_time / 60
+            'tot_time (min)' :        tot_time / 60
         }
 
         return report
@@ -71,8 +71,38 @@ class Runner():
         torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.__class__.__name__}.pt"))
 
         # save test images
-        collect_result_imgs(model, self.test_dl, 5, False, True, output_dir)
-        
+        # collect_result_imgs(model, self.test_dl, 5, False, True, output_dir)
+
+
+        from benchmarks import plot
+        ############
+        # DEBUG
+        # save comparison images
+        # from benchmarks.plot import compare_models
+        # images = []
+        # for e,l in self.test_dl:
+        #     if len(images) >= 3:
+        #         break
+        #     images.append((e,l))
+
+        # compare_models(model, model, "model1", "model2", images)
+        #############
+
+
+        ############
+        # DEBUG
+        # save comparison images 
+        count = 0  
+        for e,l in self.test_dl:
+            if count >= 1:
+                break
+            plot.compare_outputs(e, l, [model, model, model])
+            count += 1
+        #############
+
+
+
+
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
             psnr = df_test.data['psnr']
