@@ -1,3 +1,5 @@
+# TODO: remove all
+
 from imports import *
 from utilities.utils import create_folder
 from data.metrics import Metrics

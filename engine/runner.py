@@ -82,7 +82,7 @@ class Runner():
 
             
 
-        # from benchmarks import plot
+        from benchmarks import plot
         ############
         # DEBUG
         # save comparison images
@@ -94,7 +94,6 @@ class Runner():
         #     count += 1
         #############
 
-
         ############
         # DEBUG
         # save comparison images 
@@ -104,6 +103,12 @@ class Runner():
         #         break
         #     plot.plot_models_comparison(e, l, [model, model, model], True)
         #     count += 1
+        #############
+
+        ############
+        # DEBUG
+        # plot.plot_train_performance(df_train.as_dataframe(), True)
+
         #############
 
 
