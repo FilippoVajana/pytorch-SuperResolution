@@ -14,7 +14,10 @@ class Logger():
         self.data[key].append(value.item())
     
     def save(self, path):
-        df = pd.DataFrame.from_dict(self.data)
+        df = self.as_dataframe()
         df.to_excel(path, engine='xlsxwriter')
+
+    def as_dataframe(self):
+        return pd.DataFrame.from_dict(self.data)
         
     

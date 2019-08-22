@@ -1,10 +1,9 @@
 {
-    "batch_size": 5,
+    "batch_size": 8,
     "device": "cpu",
-    "epochs": 1,
+    "epochs": 20,
     "models": [        
-        "srcnn",
-        "edsr"
+        "srcnn"
     ],
     "py/object": "__main__.ModelsConfig",
     "test_data": "./data/div2k/test/2x_bicubic_32x32_small",

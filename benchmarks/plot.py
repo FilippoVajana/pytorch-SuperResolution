@@ -94,3 +94,28 @@ def plot_models_comparison(source, target, models=[], show=False):
     if show : plt.show()
 
     return fig
+
+def plot_train_performance(dataframe, show=False):
+    # build grid
+    w,h = plt.figaspect(1/3)
+    fig = plt.figure(figsize=(w,h))
+    gs = GridSpec(1,3, figure=fig)
+
+    # plot loss
+    ax1 = fig.add_subplot(gs[0])
+    ax1.set_title("Loss")
+    dataframe[['t_loss', 'v_loss']].plot(ax=ax1)
+
+    # plot psnr
+    ax2 = fig.add_subplot(gs[1])
+    ax2.set_title("PSNR")
+    dataframe[['t_psnr', 'v_psnr']].plot(ax=ax2)
+
+    # plot ssim
+    ax3 = fig.add_subplot(gs[2])
+    ax3.set_title("SSIM")
+    dataframe[['t_ssim', 'v_ssim']].plot(ax=ax3)
+
+    if show : plt.show()
+
+    return fig
