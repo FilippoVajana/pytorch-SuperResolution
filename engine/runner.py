@@ -83,20 +83,21 @@ class Runner():
             
 
         from benchmarks import plot
+        from models.BICUBIC import Bicubic
         ############
         # DEBUG
-        # save comparison images
-        # count = 0
-        # for e,l in self.test_dl:
-        #     if count >= 1:
-        #         break
-        #     plot.plot_model_perf(model, e, l, True)
-        #     count += 1
+        # single model performance images
+        count = 0
+        for e,l in self.test_dl:
+            if count >= 1:
+                break
+            plot.plot_model_perf(Bicubic(), e, l, True)
+            count += 1
         #############
 
         ############
         # DEBUG
-        # save comparison images 
+        # 3 models performance images
         # count = 0  
         # for e,l in self.test_dl:
         #     if count >= 1:

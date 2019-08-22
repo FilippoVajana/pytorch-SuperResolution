@@ -8,14 +8,11 @@ if __name__ == '__main__':
     parser.add_argument('-cfg', type=str, action='store', default='runconfig_cpu.json', help='Load configuration')
     args = parser.parse_args()
 
-
     # set logging
     logging.basicConfig(level=logging.WARNING, format='[%(asctime)s]  %(levelname)s: %(message)s', datefmt='%I:%M:%S')  
 
-
     # working directory
     wd = os.getcwd()
-
     
     # check if config file exists
     cfg_path = wd
@@ -24,7 +21,6 @@ if __name__ == '__main__':
         cfg_path = BenchmarkConfig.save_empty(wd)
     else:
         cfg_path = os.path.join(wd, args.cfg)
-
 
     # load config
     cfg = BenchmarkConfig.load(cfg_path)
