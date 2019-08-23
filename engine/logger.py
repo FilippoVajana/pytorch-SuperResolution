@@ -11,7 +11,12 @@ class Logger():
             self.data[m] = list()
 
     def add(self, key, value):
-        self.data[key].append(value.item())
+        try:
+            self.data[key].append(value.item())
+        except AttributeError:
+            self.data[key].append(value)
+        
+        
     
     def save(self, path):
         df = self.as_dataframe()
