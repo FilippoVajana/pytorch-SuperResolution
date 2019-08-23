@@ -1,50 +1,31 @@
 from imports import *
-from engine import trainer, tester
+from engine.tester import Tester
 from utilities.utils import create_folder
-from benchmarks.utils import collect_result_imgs
+from benchmarks import plot
 import data.dataset as data
+import pandas as pd
 
 
-class BenchmarkConfig(object):
-    JSON_NAME = "runconfig.json"
-
+class BenchmarkConfig():
     def __init__(self):        
-        # options
+        # run options
         self.device = 'cpu'
 
-        # data
-        self.train_data = ''        
-        self.test_data = ''
+        # test data folder path     
+        self.data = ''
 
-        # train options
-        self.load_model = False    
-        self.batch_size = 0
-        self.epochs = 0
+        # models paths
+        self.models = {'name' : 'path'}
 
-        # result options
-        self.save_output = False
-    
+        # models train data
+        self.train_data = {'name' : 'path'}
+
     def save(self, destination):
-        """
-        Saves the current configuration inside a JSON file.        
-        Args:
-        --------
-            destination (string): The destination path.        
-        Returns:
-        --------
-            string: The absolute path of the json file.
-        """
-        path = os.path.join(destination, BenchmarkConfig.JSON_NAME)
+        path = os.path.join(destination, 'benchmark_config.json')
         with open(path, "w") as f:
             json_obj = jsonpickle.encode(self)
             f.write(json_obj)
         return path
-
-    @staticmethod
-    def save_empty(destination):
-        cfg = BenchmarkConfig()
-        cfg_path = cfg.save(destination)
-        return cfg_path
 
     @staticmethod
     def load(path):
@@ -55,13 +36,16 @@ class BenchmarkConfig(object):
 
 
 class Benchmark():
-    def __init__(self, configuration=None):
-        # set configuration
-        if configuration is None : 
-            logging.warning("Running with default configuration.")
-            self.cfg = BenchmarkConfig()
-        else: 
-            self.cfg = configuration 
+    MODELS = {
+        "srcnn" : SRCNN(),
+        "edsr" : EDSR(),
+        "bicubic" : Bicubic()
+        }
+        
+    def __init__(self, configuration : BenchmarkConfig):             
+        self.cfg = configuration 
+        self.logger = logging.getLogger("benchmark")
+        self.logger.setLevel(20)
         
     def __get_id(self):
         # get run id as a time string
@@ -70,70 +54,106 @@ class Benchmark():
         id = time.strftime("%d%m_%H%M") # Hour_Minute_Day_Month
         return id       
     
-    def run(self):
+
+    def run(self, save=True):
         root = os.getcwd()
 
-        # get run id
-        logging.info("Get run ID.")
+        # get run id        
         run_id = self.__get_id()
+        self.logger.info(f"Run ID {run_id}")
 
-        # prepare datasets and dataloader
-        builder = data.DatasetBuilder()      
+        # prepare test images
+        self.logger.info("Preparing test data")
+        builder = data.DatasetBuilder()        
+        test_ds = builder.build(self.cfg.data)
+        test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False) 
 
-        logging.info("Creating train and validation sets.")
-        train_ds , validation_ds = builder.build_splitted(self.cfg.train_data)
-
-        logging.info("Creating train dataloader.")
-        train_dl = tdata.DataLoader(train_ds, self.cfg.batch_size, shuffle=True)
-
-        logging.info("Creating validation dataloader.")
-        validation_dl = tdata.DataLoader(validation_ds, 1, shuffle=False)
- 
-        
-        # init model
-        # logging.info("Initializing SRCNN model.")
-        # model = SRCNN()
-        logging.info("Initializing EDSR model.")
-        model = EDSR()
-
-        # TRAIN PHASE
-        #############
-        logging.info("Initializing model trainer.")
-        m_trainer = trainer.Trainer(model, self.cfg.device)
-
-        logging.info("Starting train phase.")
-        df_train = m_trainer.run(self.cfg.epochs, train_dl, validation_dl)
-
-        
-        # TEST PHASE
-        #############
-        test_ds = None
-        test_dl = None     
-        if os.path.isdir(self.cfg.test_data):
-            logging.info("Creating test set.")
-            test_ds = builder.build(self.cfg.test_data)
-
-            logging.info("Creating test dataloader.")
-            test_dl = tdata.DataLoader(test_ds, batch_size=1, shuffle=False)
-
-        logging.info("Initializing model tester.")
-        m_tester = tester.Tester(model, self.cfg.device)        
-        df_test = m_tester.test(test_dl)
-
+        # prepare images for comparison
+        comp_imgs = [(e,l) for idx, (e,l) in enumerate(test_dl) if idx < 4] 
+         
+        # load models
+        self.logger.info("Loading pre-trained models")
+        models = []
+        for name, df in self.cfg.models.items() :
+            if name == "bicubic":
+                models.append(Bicubic())
+                continue
+            m = self.MODELS[name]
+            m.load_state_dict(torch.load(df))
+            models.append(m)
+                
+        # test phase
+        results = dict()
+        for model in models:
+            self.logger.info(f"Testing {model.__class__.__name__}")
+            tester = Tester(model, self.cfg.device)        
+            test_df = tester.test(test_dl).as_dataframe()
+            results[model.__class__.__name__] = test_df
         
 
         # save results
-        if self.cfg.save_output == True:
-            # init run folders     
-            logging.info("Creating run directory.")   
-            run_dir = create_folder(os.path.join(root, 'benchmarks'), run_id)
+        if save == True:            
+            run_dir = create_folder(os.path.join(root, 'benchmarks'), run_id)            
+            
+            # train performance plots
+            self.logger.info("Plotting train performance metrics") 
+            for name, df in self.cfg.train_data.items():
+                df = pd.read_excel(os.path.abspath(df))
+                fig = plot.plot_train_performance(df, False)
+                fig.suptitle(f"{name.upper()}", fontsize=18)
+                plt.savefig(os.path.join(run_dir, f"train_{name}"))
+                # fig.show()
 
-            # save model
-            torch.save(model.state_dict(), os.path.join(run_dir, 'model.pt'))
+            # test performance plots
+            self.logger.info("Plotting test performance metrics")
+            for name, df in results.items():                
+                fig = plot.plot_test_performance(df, False)
+                fig.suptitle(f"{name.upper()}", fontsize=18)
+                plt.savefig(os.path.join(run_dir, f"test_{name}"))
+                # fig.show()
 
-            # save log
-            df_train.save(os.path.join(run_dir, f"{df_train.name}.xlsx"))
-            df_test.save(os.path.join(run_dir, f"{df_test.name}.xlsx"))
+            # comparison images
+            self.logger.info("Plotting comparison images")            
+            for idx, (e,l) in enumerate(test_dl):
+                if idx > 3 : break
+                fig = plot.plot_models_comparison(e, l, models, False)
+                fig.suptitle(f"Sample #{idx+1}", fontsize=18)
+                plt.savefig(os.path.join(run_dir, f"compare_{idx}"))
+                # fig.show()
+                
+            # TODO: save figures
 
-            # save test imgs sample            
-            collect_result_imgs(model, test_dl, save_path=run_dir)
+        input("Press Enter to continue...")
+
+
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Super Resolution with DNN") 
+    parser.add_argument('-cfg', type=str, action='store', default='benchmark_config.json', help='Load configuration')
+    parser.add_argument('-empty', action='store_true', help='Save empty benchmark configuration file')
+    args = parser.parse_args()
+
+    # set logging
+    logging.basicConfig(format='[%(asctime)s]  %(levelname)s: %(message)s', datefmt='%I:%M:%S')
+    logger = logging.getLogger("benchmark")
+    logger.setLevel(20)    
+
+    # working directory
+    wd = os.getcwd()
+    
+    if args.empty : 
+        logger.info("Saving empty configuration file")
+        BenchmarkConfig().save(wd)
+        exit()
+
+    # check if config file exists
+    cfg_path = os.path.join(wd, args.cfg)
+            
+
+    # load config
+    cfg = BenchmarkConfig.load(cfg_path)
+
+    # run benchmark
+    bench = Benchmark(cfg)
+    bench.run()
