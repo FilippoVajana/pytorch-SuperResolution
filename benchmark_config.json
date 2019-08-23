@@ -1,0 +1,14 @@
+{
+    "data": "./data/div2k/test/2x_bicubic_32x32_full",
+    "device": "cpu",
+    "models": {
+        "srcnn": "./benchmarks/models/SRCNN_50e.pt",
+        "edsr": "./benchmarks/models/EDSR_50e.pt",
+        "bicubic": ""
+    },
+    "train_data": {
+        "srcnn": "./benchmarks/50 epochs/full/srcnn/train_log.xlsx",
+        "edsr": "./benchmarks/50 epochs/full/edsr/train_log.xlsx"
+    },
+    "py/object": "__main__.BenchmarkConfig"
+}
