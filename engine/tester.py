@@ -10,21 +10,17 @@ class Tester():
         self.device = device
         self.model = model.to(device)
         self.loss_fn = torch.nn.MSELoss()
+        self.log = Logger("test_log", ["loss", "psnr", "ssim", "inference_time"])
 
-        self.log = Logger("test_log", ["loss", "psnr", "ssim"])
 
-
-    def test(self, test_dataloader = None):
+    def test(self, test_dataloader : tdata.DataLoader):
         """
-        Tests the trained model.
+        Tests the model.
         """
-
-        if test_dataloader == None :
-            raise Exception("Invalid test dataloader.")
-
         self.model.eval()
-        with torch.no_grad():
+        with torch.no_grad():            
             for data in tqdm(test_dataloader):
+                s_time = time.time()
                 examples, targets = data
 
                 # move data to device                
@@ -33,6 +29,7 @@ class Tester():
 
                 # predict
                 predictions = self.model(examples)
+                f_time = time.time()
 
                 # compute metrics
                 loss = self.loss_fn(predictions, targets)
@@ -43,5 +40,6 @@ class Tester():
                 self.log.add("loss", loss)
                 self.log.add("psnr", psnr)
                 self.log.add("ssim", ssim)
+                self.log.add("inference_time", f_time - s_time)
                 
         return self.log
