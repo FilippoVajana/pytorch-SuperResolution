@@ -107,18 +107,20 @@ def plot_train_performance(dataframe, show=False):
     ax1 = fig.add_subplot(gs[0])
     ax1.set_title("Loss")
     dataframe[['t_loss', 'v_loss']].plot(ax=ax1, legend=None)
-    # ax1.legend(['train', 'validation'], loc='center right')
+    ax1.set_xlabel("epoch") 
 
     # plot psnr
     ax2 = fig.add_subplot(gs[1])
     ax2.set_title("PSNR")    
     dataframe[['t_psnr', 'v_psnr']].plot(ax=ax2, legend=None)
-    # ax2.legend(['train', 'validation'], loc='center right')
+    ax2.set_xlabel("epoch")
+    ax2.set_ylabel("dB") 
 
     # plot ssim
     ax3 = fig.add_subplot(gs[2])
     ax3.set_title("SSIM")
     dataframe[['t_ssim', 'v_ssim']].plot(ax=ax3)
+    ax3.set_xlabel("epoch") 
     ax3.legend(['train', 'validation'], loc='center right')
 
     if show : plt.show()
@@ -127,35 +129,35 @@ def plot_train_performance(dataframe, show=False):
 
 def plot_test_performance(dataframe, show=False):
     # build grid
-    w,h = plt.figaspect(1/4)    
+    w,h = plt.figaspect(1/3)    
     fig = plt.figure(figsize=(w,h), constrained_layout=True)
-    gs = GridSpec(1,4, figure=fig)
+    gs = GridSpec(1,3, figure=fig)
 
     # plot loss
     ax1 = fig.add_subplot(gs[0])
     ax1.set_title("Loss")
     ax1 = dataframe[['loss']].plot(ax=ax1, legend=None)
-    ax1.set_xlabel("epochs")    
+    ax1.set_xlabel("image")    
 
     # plot psnr
     ax2 = fig.add_subplot(gs[1])
     ax2.set_title("PSNR")
     ax2 = dataframe[['psnr']].plot(ax=ax2, legend=None)
-    ax2.set_xlabel("epochs") 
+    ax2.set_xlabel("image") 
     ax2.set_ylabel("dB")
 
     # plot ssim
     ax3 = fig.add_subplot(gs[2])
     ax3.set_title("SSIM")
     ax3 = dataframe[['ssim']].plot(ax=ax3, legend=None)
-    ax3.set_xlabel("epochs") 
+    ax3.set_xlabel("image") 
 
     # plot inference time
-    ax4 = fig.add_subplot(gs[3])
-    ax4.set_title("Inference Time")
-    ax4 = dataframe[['inference_time']].plot(ax=ax4, legend=None)        
-    ax4.set_xlabel("epochs") 
-    ax4.set_ylabel("seconds")
+    # ax4 = fig.add_subplot(gs[3])
+    # ax4.set_title("Inference Time")
+    # ax4 = dataframe[['inference_time']].plot(ax=ax4, legend=None)        
+    # ax4.set_xlabel("image") 
+    # ax4.set_ylabel("seconds")
 
     if show : plt.show()
 
