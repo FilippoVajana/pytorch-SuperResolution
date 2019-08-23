@@ -55,8 +55,8 @@ def plot_models_comparison(source, target, models=[], show=False):
 
     # get models outputs
     predictions = []
-    for m in models:
-        predictions.append(m(source))        
+    for model in models:
+        predictions.append(model(source))        
 
     # transform tensors to valid images
     predictions_i = [toPIL(p.squeeze()) for p in predictions]
