@@ -18,7 +18,9 @@ import os
 import re
 import argparse
 import logging
+import time
 
 # Project modules
 from models.SRCNN import SRCNN
 from models.EDSR import EDSR
+from models.BICUBIC import Bicubic

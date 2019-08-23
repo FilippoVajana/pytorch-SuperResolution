@@ -15,7 +15,8 @@ def plot_model_perf(model, source, target, show=False):
     toPIL = torchvision.transforms.ToPILImage()    
     
     # build plot figure
-    fig = plt.figure(constrained_layout=False)
+    w,h = plt.figaspect(1/3)    
+    fig = plt.figure(figsize=(w,h))
     gs = GridSpec(1, 3, figure=fig)   
 
     # get model output
@@ -29,11 +30,11 @@ def plot_model_perf(model, source, target, show=False):
     # compose grid
     ax1 = fig.add_subplot(gs[0])
     ax1.set_title('Source')
-    ax1.imshow(source_i)
+    ax1.imshow(source_i) 
 
     ax2 = fig.add_subplot(gs[1])
     ax2.set_title(model.__class__.__name__)
-    _set_metrics(ax2, target, out)
+    _set_metrics(ax2, target, out)    
     ax2.imshow(out_i)
     
     ax3 = fig.add_subplot(gs[2])
@@ -48,8 +49,9 @@ def plot_models_comparison(source, target, models=[], show=False):
     toPIL = torchvision.transforms.ToPILImage()
 
     # build grids
-    fig = plt.figure(constrained_layout=False)
-    gs = GridSpec(2, 1, figure=fig, hspace=.5)
+    w,h = plt.figaspect(1/2)    
+    fig = plt.figure(figsize=(w,h+1))
+    gs = GridSpec(2, 1, figure=fig, hspace=.35, wspace=.0)
     sub_gs1 = gs[0].subgridspec(1,2)
     sub_gs2 = gs[1].subgridspec(1,3)
 
@@ -97,24 +99,63 @@ def plot_models_comparison(source, target, models=[], show=False):
 
 def plot_train_performance(dataframe, show=False):
     # build grid
-    w,h = plt.figaspect(1/3)
+    w,h = plt.figaspect(1/3)    
     fig = plt.figure(figsize=(w,h))
     gs = GridSpec(1,3, figure=fig)
 
     # plot loss
     ax1 = fig.add_subplot(gs[0])
     ax1.set_title("Loss")
-    dataframe[['t_loss', 'v_loss']].plot(ax=ax1)
+    dataframe[['t_loss', 'v_loss']].plot(ax=ax1, legend=None)
+    # ax1.legend(['train', 'validation'], loc='center right')
 
     # plot psnr
     ax2 = fig.add_subplot(gs[1])
-    ax2.set_title("PSNR")
-    dataframe[['t_psnr', 'v_psnr']].plot(ax=ax2)
+    ax2.set_title("PSNR")    
+    dataframe[['t_psnr', 'v_psnr']].plot(ax=ax2, legend=None)
+    # ax2.legend(['train', 'validation'], loc='center right')
 
     # plot ssim
     ax3 = fig.add_subplot(gs[2])
     ax3.set_title("SSIM")
     dataframe[['t_ssim', 'v_ssim']].plot(ax=ax3)
+    ax3.legend(['train', 'validation'], loc='center right')
+
+    if show : plt.show()
+
+    return fig
+
+def plot_test_performance(dataframe, show=False):
+    # build grid
+    w,h = plt.figaspect(1/4)    
+    fig = plt.figure(figsize=(w,h), constrained_layout=True)
+    gs = GridSpec(1,4, figure=fig)
+
+    # plot loss
+    ax1 = fig.add_subplot(gs[0])
+    ax1.set_title("Loss")
+    ax1 = dataframe[['loss']].plot(ax=ax1, legend=None)
+    ax1.set_xlabel("epochs")    
+
+    # plot psnr
+    ax2 = fig.add_subplot(gs[1])
+    ax2.set_title("PSNR")
+    ax2 = dataframe[['psnr']].plot(ax=ax2, legend=None)
+    ax2.set_xlabel("epochs") 
+    ax2.set_ylabel("dB")
+
+    # plot ssim
+    ax3 = fig.add_subplot(gs[2])
+    ax3.set_title("SSIM")
+    ax3 = dataframe[['ssim']].plot(ax=ax3, legend=None)
+    ax3.set_xlabel("epochs") 
+
+    # plot inference time
+    ax4 = fig.add_subplot(gs[3])
+    ax4.set_title("Inference Time")
+    ax4 = dataframe[['inference_time']].plot(ax=ax4, legend=None)        
+    ax4.set_xlabel("epochs") 
+    ax4.set_ylabel("seconds")
 
     if show : plt.show()
 
