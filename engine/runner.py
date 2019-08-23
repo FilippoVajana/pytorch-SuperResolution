@@ -4,7 +4,6 @@ import time
 from imports import *
 from data.dataset import *
 from engine import trainer, tester
-from benchmarks.utils import collect_result_imgs
 
 
 class Runner():
@@ -69,9 +68,7 @@ class Runner():
 
         # save model params
         torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.__class__.__name__}.pt"))
-
-        # save test images
-        if save : collect_result_imgs(model, self.test_dl, 5, False, True, output_dir)
+        # TODO: export as ONNX
         
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
@@ -80,10 +77,8 @@ class Runner():
             report = self.build_report(model.__class__.__name__, psnr, ssim, cpu_time)
             report.write(f)
 
-            
 
-        from benchmarks import plot
-        from models.BICUBIC import Bicubic
+        from benchmarks import plot        
         ############
         # DEBUG
         # single model performance images
@@ -91,7 +86,7 @@ class Runner():
         for e,l in self.test_dl:
             if count >= 1:
                 break
-            plot.plot_model_perf(Bicubic(), e, l, True)
+            plot.plot_model_perf(model, e, l, True)
             count += 1
         #############
 
