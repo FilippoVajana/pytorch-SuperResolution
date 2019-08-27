@@ -1,4 +1,6 @@
 from imports import *
+from skimage.io import imread
+from torch import onnx
 
 def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor = 2):
     print("Building train data")
@@ -43,13 +45,11 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
         except StopIteration:
             pass
 
-
 def get_device(dev=None):    
     d = torch.device("cpu") if dev == None else torch.device("cuda:{}".format(dev))
     
     print("Selected Device: ", d)
     return d
-
 
 def create_folder(root, name=None):
     if name != None:
@@ -63,3 +63,10 @@ def create_folder(root, name=None):
         print("Successfully created the directory %s " % root)
     
     return root
+
+
+def export_onnx(destination, model):
+    # create dummy model input
+    dummy_in = torch.randn(2, 1, 32, 32)
+    filename = f"{model.__class__.__name__}.onnx"
+    onnx.export(model, dummy_in, os.path.join(destination, filename), export_params=False, operator_export_type=torch.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK)

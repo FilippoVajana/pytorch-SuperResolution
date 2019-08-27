@@ -4,6 +4,7 @@ import time
 from imports import *
 from data.dataset import *
 from engine import trainer, tester
+from utilities.utils import export_onnx
 
 
 class Runner():
@@ -68,6 +69,7 @@ class Runner():
 
         # save model params
         torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.__class__.__name__}.pt"))
+        export_onnx(output_dir, model)
         
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
