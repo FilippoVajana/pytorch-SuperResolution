@@ -68,7 +68,6 @@ class Runner():
 
         # save model params
         torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.__class__.__name__}.pt"))
-        # TODO: export as ONNX
         
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
@@ -82,12 +81,12 @@ class Runner():
         ############
         # DEBUG
         # single model performance images
-        count = 0
-        for e,l in self.test_dl:
-            if count >= 1:
-                break
-            plot.plot_model_perf(model, e, l, True)
-            count += 1
+        # count = 0
+        # for e,l in self.test_dl:
+        #     if count >= 1:
+        #         break
+        #     plot.plot_model_perf(model, e, l, True)
+        #     count += 1
         #############
 
         ############
