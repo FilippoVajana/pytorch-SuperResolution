@@ -1,7 +1,6 @@
 from imports import *
 from engine.logger import Logger
 from data.metrics import Metrics
-from utilities.utils import show_results
 from tqdm import tqdm
 
 

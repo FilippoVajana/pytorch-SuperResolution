@@ -43,39 +43,6 @@ def resize_img_batch(source_dir, target_dir, img_num, example_size, mult_factor 
         except StopIteration:
             pass
 
-def show_results(res, display=True):
-    """
-    Show model output compared with source and label images.
-
-    Parameters
-    ----------
-        res : (original, output, label)
-              A tuple of three Pytorch Tensor images.
-    """
-    cols = 3
-    rows = 1
-    toPil = torchvision.transforms.ToPILImage()
-    origin, output, label = res
-
-    fig = plt.figure()
-    fig.set_size_inches(30, 10)    
-
-    ax1 = fig.add_subplot(rows, cols, 1)
-    ax1.set_title("train image {}".format(origin.shape))
-    plt.imshow(toPil(origin))
-
-    ax1 = fig.add_subplot(rows, cols, 2)
-    ax1.set_title("output image {}".format(output.shape))
-    plt.imshow(toPil(output))
-
-    ax1 = fig.add_subplot(rows, cols, 3)
-    ax1.set_title("label image {}".format(label.shape))
-    plt.imshow(toPil(label))
-
-    if display == True : plt.show()
-
-    return fig
-
 
 def get_device(dev=None):    
     d = torch.device("cpu") if dev == None else torch.device("cuda:{}".format(dev))
