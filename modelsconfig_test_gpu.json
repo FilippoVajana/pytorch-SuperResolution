@@ -1,6 +1,6 @@
 {
     "batch_size": 8,
-    "device": "gpu",
+    "device": "cuda",
     "epochs": 1,
     "models": [        
         "edsr",

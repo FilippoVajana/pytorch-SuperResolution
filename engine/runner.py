@@ -69,7 +69,7 @@ class Runner():
 
         # save model params
         torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.__class__.__name__}.pt"))
-        export_onnx(output_dir, model)
+        export_onnx(output_dir, model, self.cfg.device)
         
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
@@ -105,7 +105,6 @@ class Runner():
         ############
         # DEBUG
         # plot.plot_train_performance(df_train.as_dataframe(), True)
-
         #############
 
 

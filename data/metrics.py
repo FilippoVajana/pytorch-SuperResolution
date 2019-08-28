@@ -10,13 +10,13 @@ class Metrics():
 
     @staticmethod
     def psnr(target, prediction):
-        t = target.squeeze().data.numpy()        
-        p = prediction.squeeze().data.numpy()
+        t = target.cpu().squeeze().data.numpy()        
+        p = prediction.cpu().squeeze().data.numpy()
         psnr = compare_psnr(t, p, data_range = np.max(p) - np.min(p))
         return psnr if psnr >= 0 else 0.0
 
     @staticmethod
     def ssim(target, prediction):
-        t = target.squeeze().data.numpy()
-        p = prediction.squeeze().data.numpy()
+        t = target.cpu().squeeze().data.numpy()
+        p = prediction.cpu().squeeze().data.numpy()
         return compare_ssim(t, p, data_range = np.max(p) - np.min(p))

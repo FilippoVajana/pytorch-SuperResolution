@@ -1,6 +1,6 @@
 {
     "batch_size": 15,
-    "device": "gpu",
+    "device": "cuda",
     "epochs": 50,
     "models": [
         "srcnn",
