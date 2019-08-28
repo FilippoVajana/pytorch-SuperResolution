@@ -1,14 +1,14 @@
 {
-    "data": "./data/div2k/test/2x_bicubic_128_full_rgb",
+    "data": "./data/div2k/test/2x_bicubic_48_full_rgb",
     "device": "cpu",
     "models": {
-        "srcnn": "./benchmarks/models/SRCNN_50e.pt",
-        "edsr": "./benchmarks/models/EDSR_50e.pt",
+        "srcnn": "./benchmarks/models/srcnn/SRCNN_in3.pt",
+        "edsr": "./benchmarks/models/edsr/EDSR_in3.pt",
         "bicubic": ""
     },
     "train_data": {
-        "srcnn": "./benchmarks/50 epochs/full/srcnn/train_log.xlsx",
-        "edsr": "./benchmarks/50 epochs/full/edsr/train_log.xlsx"
+        "srcnn": "./benchmarks/models/srcnn/srcnn_train_log.xlsx",
+        "edsr": "./benchmarks/models/edsr/edsr_train_log.xlsx"
     },
     "py/object": "__main__.BenchmarkConfig"
 }

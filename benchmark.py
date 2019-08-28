@@ -130,7 +130,7 @@ class Benchmark():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Super Resolution with DNN") 
-    parser.add_argument('-cfg', type=str, action='store', default='benchmark_config.json', help='Load configuration')
+    parser.add_argument('-cfg', type=str, action='store', default='./configs/benchmark_cpu_rgb.json', help='Load configuration')
     parser.add_argument('-empty', action='store_true', help='Save empty benchmark configuration file')
     args = parser.parse_args()
 
