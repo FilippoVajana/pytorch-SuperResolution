@@ -7,6 +7,6 @@
         "edsr"
     ],
     "py/object": "__main__.ModelsConfig",
-    "test_data": "./data/div2k/test/2x_bicubic",
-    "train_data": "./data/div2k/train/2x_bicubic"
+    "test_data": "./data/div2k/test/2x_bicubic_128_rgb_full",
+    "train_data": "./data/div2k/train/2x_bicubic_128_rgb_full"
 }
