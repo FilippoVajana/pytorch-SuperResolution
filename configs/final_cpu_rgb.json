@@ -1,10 +1,10 @@
 {
     "batch_size": 15,
-    "device": "cuda",
+    "device": "cpu",
     "epochs": 50,
     "models": [
-        "srcnn",
-        "edsr"
+        "srcnn3",
+        "edsr3"
     ],
     "py/object": "__main__.ModelsConfig",
     "test_data": "./data/div2k/test/2x_bicubic_128_full_rgb",

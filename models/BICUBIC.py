@@ -6,6 +6,7 @@ import torch.nn.functional as F
 class Bicubic(nn.Module):
     def __init__(self):
         super(Bicubic, self).__init__()
+        self.name = f"{self.__class__.__name__}"
         self.scale_factor = 2
         self.mode = 'bicubic'
 

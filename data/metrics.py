@@ -17,6 +17,7 @@ class Metrics():
 
     @staticmethod
     def ssim(target, prediction):
-        t = target.cpu().squeeze().data.numpy()
-        p = prediction.cpu().squeeze().data.numpy()
-        return compare_ssim(t, p, data_range = np.max(p) - np.min(p))
+        t = target.cpu().permute(1,2,0).squeeze().data.numpy()
+        p = prediction.cpu().permute(1,2,0).squeeze().data.numpy()
+        rgb = True if len(p.shape) > 2 else False
+        return compare_ssim(t, p, data_range = np.max(p) - np.min(p), multichannel=rgb)

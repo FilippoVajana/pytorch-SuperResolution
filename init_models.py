@@ -36,7 +36,7 @@ class ModelsConfig():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to train and validate DNN models.")
     parser.add_argument('-cfg', type=str, action='store', default='modelsconfig.json', help='Load configuration file.')
-    parser.add_argument('-save', action='store_true', help='Save performance evaluation images.' )
+    parser.add_argument('-save', action='store_true', default=False,  help='Save performance evaluation images.' )
     args = parser.parse_args()
 
     # load config
@@ -44,14 +44,16 @@ if __name__ == "__main__":
 
     # models
     MODELS = {
-        "srcnn" : SRCNN.SRCNN(),
-        "edsr" : EDSR.EDSR()
+        "srcnn" : SRCNN.SRCNN(1),
+        "edsr" : EDSR.EDSR(1),
+        "srcnn3" : SRCNN.SRCNN(3),
+        "edsr3" : EDSR.EDSR(3)
         }
 
     # create root dir
     root = dt.datetime.now().strftime("%d%m_%H%M") # Hour_Minute_Day_Month
     cwd = os.getcwd()
-    root = create_folder(os.path.join(cwd, 'benchmarks', root))
+    root = create_folder(os.path.join(cwd, 'benchmarks', 'models', root))
 
     runner = Runner(config)
     for m in config.models:
@@ -63,5 +65,5 @@ if __name__ == "__main__":
         out_dir = create_folder(os.path.join(root, str(m)))
         
         # call runner
-        runner.run(MODELS[m], out_dir)
+        runner.run(MODELS[m], out_dir, args.save)
 

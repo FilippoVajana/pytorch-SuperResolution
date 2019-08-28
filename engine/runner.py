@@ -68,14 +68,14 @@ class Runner():
         df_test.save(os.path.join(output_dir, f"{df_test.name}.xlsx"))
 
         # save model params
-        torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.__class__.__name__}.pt"))
+        torch.save(m_trainer.best_model, os.path.join(output_dir, f"{model.name}.pt"))
         export_onnx(output_dir, model, self.cfg.device)
         
         # create and save run report
         with open(os.path.join(output_dir, "report.ini"), "w") as f:
             psnr = df_test.data['psnr']
             ssim = df_test.data['ssim']
-            report = self.build_report(model.__class__.__name__, psnr, ssim, cpu_time)
+            report = self.build_report(model.name, psnr, ssim, cpu_time)
             report.write(f)
 
 

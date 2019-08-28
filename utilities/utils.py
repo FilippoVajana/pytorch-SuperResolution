@@ -65,8 +65,10 @@ def create_folder(root, name=None):
     return root
 
 
-def export_onnx(destination, model, device):
+def export_onnx(destination, model : nn.Module, device):
     # create dummy model input
-    dummy_in = torch.randn(2, 1, 32, 32).to(device)
-    filename = f"{model.__class__.__name__}.onnx"
+    mods = list(model.modules())
+    size = mods[1].in_channels
+    dummy_in = torch.randn(2, size, 32, 32).to(device)
+    filename = f"{model.name}.onnx"
     onnx.export(model, dummy_in, os.path.join(destination, filename), export_params=False, operator_export_type=torch.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK)
