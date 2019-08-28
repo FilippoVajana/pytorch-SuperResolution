@@ -79,19 +79,28 @@ def init_data(source_dir, dest_name, examples_num = 0, img_size = 0, rgb = False
 
 if __name__ == "__main__":   
     parser = argparse.ArgumentParser(description="Script to prepare the dataset for the SR instance.")
-    parser.add_argument('-dn', help='New dataset folder name', type=str, action='store', default='2x_bicubic_32x32_x')
     parser.add_argument('-dl', help='Number of examples, 0=ALL', type=int, action='store', default=0)
     parser.add_argument('-src', help='Data source', type=str, action='store', default='./data/div2k/train/2x_bicubic')
     parser.add_argument('-s', help='Example image size', type=int, action='store', default=32)
     parser.add_argument('-rgb', help='RGB images', action='store_true', default=False)
     parser.add_argument('-im', help='Label image size multiplier', type=int, action='store', default=2)
+    parser.add_argument('-test', help='Initialize test data', action='store_true', default=False)
     args = parser.parse_args()
 
-    ds_name = args.dn
     ds_len = args.dl
-    ds_src = args.src
+    ds_src = args.src if args.test == False else './data/div2k/test/2x_bicubic'
     im_size = args.s
     im_rgb = args.rgb
     im_mult = args.im
+    ds_name = f"{os.path.basename(os.path.normpath(ds_src))}_{im_size}"
+
+    if args.dl == 0 : ds_name = f"{ds_name}_full"
+    else : ds_name = f"{ds_name}_{args.dl}" 
+
+    if args.rgb : ds_name = f"{ds_name}_rgb"
+    else : ds_name = f"{ds_name}_grey"
+        
+    if args.test : ds_name = f"{ds_name}_test" 
+    else : ds_name = f"{ds_name}_train"
 
     init_data(ds_src, ds_name, ds_len, im_size, im_rgb, im_mult)

@@ -1,5 +1,5 @@
 {
-    "data": "./data/div2k/test/2x_bicubic_128_rgb_full",
+    "data": "./data/div2k/test/2x_bicubic_128_full_rgb",
     "device": "cpu",
     "models": {
         "srcnn": "./benchmarks/models/SRCNN_50e.pt",
