@@ -134,3 +134,4 @@ model.pt
 notes.md
 sync_*.sh
 benchmarks/*/
+utilities/*_rsa
