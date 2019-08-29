@@ -1,7 +1,7 @@
 {
     "batch_size": 15,
     "device": "cpu",
-    "epochs": 50,
+    "epochs": 250,
     "models": [
         "srcnn3",
         "edsr3"

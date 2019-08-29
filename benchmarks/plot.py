@@ -6,8 +6,8 @@ from skimage.io import imread
 
 
 def _set_metrics(axis, target, prediction):
-        psnr = Metrics().psnr(target, prediction)
-        ssim = Metrics().ssim(target, prediction)
+        psnr = Metrics().psnr(target.squeeze(), prediction.squeeze())
+        ssim = Metrics().ssim(target.squeeze(), prediction.squeeze())
         s = "PSNR: {:2.2f}\nSSIM: {:2.2f}".format(psnr, ssim)
         axis.set_xlabel(s)
 
