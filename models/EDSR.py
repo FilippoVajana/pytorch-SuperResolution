@@ -7,8 +7,8 @@ import torch.nn.functional as F
 class ResidualBlock(nn.Module):
     def __init__(self):
         super(ResidualBlock, self).__init__()  
-        self.conv1 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1, bias=False)
-        self.conv2 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1, bias=False)
         
     def forward(self, x):
         identity = x        
@@ -22,8 +22,8 @@ class EDSR(nn.Module):
     def __init__(self, img_channels = 3):
         super(EDSR, self).__init__()
         self.name = f"{self.__class__.__name__}_in{img_channels}"
-        self.conv_in = nn.Conv2d(in_channels=img_channels, out_channels=64, kernel_size=9, stride=1, padding=4, bias=False)
-        self.residuals = self._resblocks(16)
+        self.conv_in = nn.Conv2d(in_channels=img_channels, out_channels=256, kernel_size=9, stride=1, padding=4, bias=False)
+        self.residuals = self._resblocks(32)
         self.scaler2x = self._upsample2x()
         self.conv_out = nn.Conv2d(in_channels=64, out_channels=img_channels, kernel_size=3, stride=1, padding=1, bias=False)
 
@@ -44,7 +44,7 @@ class EDSR(nn.Module):
 
     def _upsample2x(self):
         scaler = nn.Sequential(
-            nn.Conv2d(in_channels=64, out_channels=256, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1, padding=1, bias=False),
             nn.PixelShuffle(2),
             nn.ReLU()
         )
