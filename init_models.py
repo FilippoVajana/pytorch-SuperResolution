@@ -35,7 +35,7 @@ class ModelsConfig():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Script to train and validate DNN models.")
-    parser.add_argument('-cfg', type=str, action='store', default='modelsconfig.json', help='Load configuration file.')
+    parser.add_argument('-cfg', type=str, action='store', default='./configs/final_gpu_rgb.json', help='Load configuration file.')
     parser.add_argument('-save', action='store_true', default=False,  help='Save performance evaluation images.' )
     args = parser.parse_args()
 

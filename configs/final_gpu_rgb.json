@@ -1,7 +1,7 @@
 {
-    "batch_size": 10,
+    "batch_size": 16,
     "device": "cuda",
-    "epochs": 50,
+    "epochs": 100,
     "models": [
         "edsr3",
         "srcnn3"
