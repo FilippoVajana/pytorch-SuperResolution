@@ -44,10 +44,8 @@ if __name__ == "__main__":
 
     # models
     MODELS = {
-        "srcnn" : SRCNN.SRCNN(1),
-        "edsr" : EDSR.EDSR(1),
-        "srcnn3" : SRCNN.SRCNN(3),
-        "edsr3" : EDSR.EDSR(3)
+        "srcnn" : SRCNN.SRCNN(),
+        "edsr" : EDSR.EDSR()
         }
 
     # create root dir

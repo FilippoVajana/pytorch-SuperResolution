@@ -11,7 +11,7 @@ class Trainer():
         self.model = model.to(device)
 
         # set default optimizer
-        lr = 0.0001
+        lr = 0.01
         self.optimizer = torch.optim.Adam(model.parameters(), lr=lr)
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size = 1, gamma=0.9)
 
