@@ -38,8 +38,7 @@ class BenchmarkConfig():
 class Benchmark():
     MODELS = {
         "srcnn" : SRCNN(),
-        "edsr" : EDSR(),
-        "bicubic" : Bicubic()
+        "edsr" : EDSR()
         }
         
     def __init__(self, configuration : BenchmarkConfig):             
@@ -74,10 +73,7 @@ class Benchmark():
         # load models
         self.logger.info("Loading pre-trained models")
         models = []
-        for name, df in self.cfg.models.items() :
-            if name == "bicubic":
-                models.append(Bicubic())
-                continue
+        for name, df in self.cfg.models.items() :            
             m = self.MODELS[name]
             m.load_state_dict(torch.load(df))
             models.append(m)
@@ -105,12 +101,12 @@ class Benchmark():
                 # fig.show()
 
             # test performance plots
-            self.logger.info("Plotting test performance metrics")
-            for name, df in results.items():                
-                fig = plot.plot_test_performance(df, False)
-                fig.suptitle(f"{name.upper()}", fontsize=18)
-                plt.savefig(os.path.join(run_dir, f"test_{name}"))
-                # fig.show()
+            # self.logger.info("Plotting test performance metrics")
+            # for name, df in results.items():                
+            #     fig = plot.plot_test_performance(df, False)
+            #     fig.suptitle(f"{name.upper()}", fontsize=18)
+            #     plt.savefig(os.path.join(run_dir, f"test_{name}"))
+            #     # fig.show()
 
             # comparison images
             self.logger.info("Plotting comparison images")            
@@ -120,8 +116,6 @@ class Benchmark():
                 fig.suptitle(f"Sample #{idx+1}", fontsize=18)
                 plt.savefig(os.path.join(run_dir, f"compare_{idx}"))
                 # fig.show()
-                
-            # TODO: save figures
 
         input("Press Enter to continue...")
 
@@ -130,7 +124,7 @@ class Benchmark():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Super Resolution with DNN") 
-    parser.add_argument('-cfg', type=str, action='store', default='./configs/benchmark_rgb.json', help='Load configuration')
+    parser.add_argument('-cfg', type=str, action='store', default='./configs/benchmark_grey.json', help='Load configuration')
     parser.add_argument('-empty', action='store_true', help='Save empty benchmark configuration file')
     args = parser.parse_args()
 
