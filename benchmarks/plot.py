@@ -4,6 +4,8 @@ from data.metrics import Metrics
 from matplotlib.gridspec import *
 from skimage.io import imread
 
+plt.style.use('tableau-colorblind10')
+
 
 def _set_metrics(axis, target, prediction):
         psnr = Metrics().psnr(target.squeeze(), prediction.squeeze())
@@ -65,26 +67,22 @@ def plot_models_comparison(source, target, models=[], show=False):
 
     # compose first subgrid
     ax1 = fig.add_subplot(gs[0])
-    ax1.set_title('Source')
-    ax1.axis("off")
+    ax1.set_title('Source')    
     ax1.imshow(source_i)
 
     ax2 = fig.add_subplot(gs[3])
-    ax2.set_title('Ground Truth')
-    ax2.axis("off")
+    ax2.set_title('Ground Truth')    
     ax2.imshow(target_i)
 
     # compose second subgrid
     ax3 = fig.add_subplot(gs[1])
-    ax3.set_title(models[0].__class__.__name__)
-    ax3.axis("off")
+    ax3.set_title(models[0].__class__.__name__)    
     out3 = models[0](source)
     _set_metrics(ax3, target, out3)
     ax3.imshow(toPIL(out3.squeeze()))
 
     ax4 = fig.add_subplot(gs[2])
-    ax4.set_title(models[1].__class__.__name__)
-    ax4.axis("off")
+    ax4.set_title(models[1].__class__.__name__)    
     out4 = models[1](source)
     _set_metrics(ax4, target, out4)
     ax4.imshow(toPIL(out4.squeeze()))
