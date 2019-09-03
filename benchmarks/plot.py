@@ -49,11 +49,9 @@ def plot_models_comparison(source, target, models=[], show=False):
     toPIL = torchvision.transforms.ToPILImage()
 
     # build grids
-    w,h = plt.figaspect(1/2)    
-    fig = plt.figure(figsize=(w,h+1))
-    gs = GridSpec(2, 1, figure=fig, hspace=.35, wspace=.0)
-    sub_gs1 = gs[0].subgridspec(1,2)
-    sub_gs2 = gs[1].subgridspec(1,3)
+    w,h = plt.figaspect(1/4)    
+    fig = plt.figure(figsize=(w,h))
+    gs = GridSpec(1, 4, figure=fig)
 
     # get models outputs
     predictions = []
@@ -66,32 +64,30 @@ def plot_models_comparison(source, target, models=[], show=False):
     target_i = toPIL(target.squeeze())
 
     # compose first subgrid
-    ax1 = fig.add_subplot(sub_gs1[0,0])
+    ax1 = fig.add_subplot(gs[0])
     ax1.set_title('Source')
+    ax1.axis("off")
     ax1.imshow(source_i)
 
-    ax2 = fig.add_subplot(sub_gs1[0,1])
+    ax2 = fig.add_subplot(gs[3])
     ax2.set_title('Ground Truth')
+    ax2.axis("off")
     ax2.imshow(target_i)
 
     # compose second subgrid
-    ax3 = fig.add_subplot(sub_gs2[0,0])
+    ax3 = fig.add_subplot(gs[1])
     ax3.set_title(models[0].__class__.__name__)
+    ax3.axis("off")
     out3 = models[0](source)
     _set_metrics(ax3, target, out3)
     ax3.imshow(toPIL(out3.squeeze()))
 
-    ax4 = fig.add_subplot(sub_gs2[0,1])
+    ax4 = fig.add_subplot(gs[2])
     ax4.set_title(models[1].__class__.__name__)
+    ax4.axis("off")
     out4 = models[1](source)
     _set_metrics(ax4, target, out4)
     ax4.imshow(toPIL(out4.squeeze()))
-
-    ax5 = fig.add_subplot(sub_gs2[0,2])
-    ax5.set_title(models[2].__class__.__name__)
-    out5 = models[2](source)
-    _set_metrics(ax5, target, out5)
-    ax5.imshow(toPIL(out5.squeeze()))
 
     if show : plt.show()
 
