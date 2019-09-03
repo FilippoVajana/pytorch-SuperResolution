@@ -11,9 +11,11 @@ class Trainer():
         self.model = model.to(device)
 
         # set default optimizer
-        lr = 0.01
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size = 1, gamma=0.9)
+        lr = 0.001
+        self.optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4, betas=(0.9, 0.999), eps=1e-08)
+
+        # TODO: try to enable lr optimizer
+        # self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size = 1, gamma=0.9)        
 
         # set default loss function
         self.loss_fn = torch.nn.L1Loss()
@@ -64,7 +66,7 @@ class Trainer():
 
 
             # update learning rate
-            self.scheduler.step()
+            # self.scheduler.step()
 
             # validation loop
             if validation_dataloader == None : 
