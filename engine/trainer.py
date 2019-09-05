@@ -18,7 +18,7 @@ class Trainer():
         # self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size = 1, gamma=0.9)        
 
         # set default loss function
-        self.loss_fn = torch.nn.L1Loss()
+        self.loss_fn = torch.nn.MSELoss()
 
         # save best model parameters
         self.best_model = model.state_dict()
