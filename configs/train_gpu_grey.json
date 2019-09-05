@@ -1,12 +1,12 @@
 {
-    "batch_size": 16,
+    "batch_size": 20,
     "device": "cuda",
-    "epochs": 30,
+    "epochs": 100,
     "models": [
         "edsr",
         "srcnn"
     ],
     "py/object": "__main__.ModelsConfig",
-    "test_data": "./data/div2k/test/2x_bicubic_48_full_grey",
+    "test_data": "./data/div2k/test/2x_bicubic_48_100_grey",
     "train_data": "./data/div2k/train/2x_bicubic_48_full_grey"
 }
