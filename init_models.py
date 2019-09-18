@@ -9,12 +9,12 @@ from engine.runner import Runner
 
 class ModelsConfig():
     def __init__(self):
-        self.models = ["srcnn"] # list of models to init
-        self.device = "cpu"     # device for training
-        self.epochs = 10        # train epochs
-        self.batch_size = 5     # train batch size
-        self.train_data = ""    # path to train data folder
-        self.test_data = ""     # path to test data folder
+        self.models = ["srcnn", "edsr"] # list of models to init
+        self.device = "cpu"             # device for training
+        self.epochs = 0                 # train epochs
+        self.batch_size = 0             # train batch size
+        self.train_data = ""            # path to train data folder
+        self.test_data = ""             # path to test data folder
 
     def save(self):
         name = "modelsconfig.json"

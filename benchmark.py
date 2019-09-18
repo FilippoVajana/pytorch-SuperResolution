@@ -4,6 +4,7 @@ from utilities.utils import create_folder
 from benchmarks import plot
 import data.dataset as data
 import pandas as pd
+from tqdm import tqdm
 
 
 class BenchmarkConfig():
@@ -75,16 +76,16 @@ class Benchmark():
         models = []
         for name, df in self.cfg.models.items() :            
             m = self.MODELS[name]
-            m.load_state_dict(torch.load(df))
+            m.load_state_dict(torch.load(df, map_location='cpu'))
             models.append(m)
                 
         # test phase
-        results = dict()
-        for model in models:
-            self.logger.info(f"Testing {model.__class__.__name__}")
-            tester = Tester(model, self.cfg.device)        
-            test_df = tester.test(test_dl).as_dataframe()
-            results[model.__class__.__name__] = test_df
+        # results = dict()
+        # for model in models:
+        #     self.logger.info(f"Testing {model.__class__.__name__}")
+        #     tester = Tester(model, self.cfg.device)        
+        #     test_df = tester.test(test_dl).as_dataframe()
+        #     results[model.__class__.__name__] = test_df
         
 
         # save results
@@ -92,13 +93,13 @@ class Benchmark():
             run_dir = create_folder(os.path.join(root, 'benchmarks'), run_id)            
             
             # train performance plots
-            self.logger.info("Plotting train performance metrics") 
-            for name, df in self.cfg.train_data.items():
-                df = pd.read_excel(os.path.abspath(df))
-                fig = plot.plot_train_performance(df, False)
-                fig.suptitle(f"{name.upper()}", fontsize=18)
-                plt.savefig(os.path.join(run_dir, f"train_{name}"))
-                # fig.show()
+            # self.logger.info("Plotting train performance metrics") 
+            # for name, df in self.cfg.train_data.items():
+            #     df = pd.read_excel(os.path.abspath(df))
+            #     fig = plot.plot_train_performance(df, False)
+            #     fig.suptitle(f"{name.upper()}", fontsize=18)
+            #     plt.savefig(os.path.join(run_dir, f"train_{name}"))
+            #     # fig.show()
 
             # test performance plots
             # self.logger.info("Plotting test performance metrics")
@@ -110,10 +111,9 @@ class Benchmark():
 
             # comparison images
             self.logger.info("Plotting comparison images")            
-            for idx, (e,l) in enumerate(test_dl):
+            for idx, (e,l) in tqdm(enumerate(test_dl)):
                 if idx > 3 : break
                 fig = plot.plot_models_comparison(e, l, models, False)
-                fig.suptitle(f"Sample #{idx+1}", fontsize=18)
                 plt.savefig(os.path.join(run_dir, f"compare_{idx}"))
                 # fig.show()
 

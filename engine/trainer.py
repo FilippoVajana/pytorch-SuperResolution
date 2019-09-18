@@ -13,12 +13,10 @@ class Trainer():
         # set default optimizer
         lr = 0.001
         self.optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4, betas=(0.9, 0.999), eps=1e-08)
-
-        # TODO: try to enable lr optimizer
-        # self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size = 1, gamma=0.9)        
-
+         
         # set default loss function
-        self.loss_fn = torch.nn.MSELoss()
+        self.loss_fn = torch.nn.L1Loss()
+        # self.loss_fn = torch.nn.MSELoss()
 
         # save best model parameters
         self.best_model = model.state_dict()
@@ -63,10 +61,6 @@ class Trainer():
             self.log.add("t_loss", tmp_loss.mean())  
             self.log.add("t_psnr", tmp_psnr.mean())     
             self.log.add("t_ssim", tmp_ssim.mean())    
-
-
-            # update learning rate
-            # self.scheduler.step()
 
             # validation loop
             if validation_dataloader == None : 
