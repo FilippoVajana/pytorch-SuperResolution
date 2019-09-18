@@ -1,6 +1,6 @@
 # Deep PyTorch Super Resolution
 
-A PyTorch 1.1.0 implementation of **SRCNN** **EDSR** neural networks for Super Resolution Single Frame tasks.
+A PyTorch 1.1.0 implementation of **SRCNN** and **EDSR** neural networks for Super Resolution Single Frame tasks.
 
 ## Usage
 
