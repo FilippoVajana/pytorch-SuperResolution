@@ -68,24 +68,24 @@ def plot_models_comparison(source, target, models=[], show=False):
     # compose first subgrid
     ax1 = fig.add_subplot(gs[0])
     ax1.set_title('Source')    
-    ax1.imshow(source_i)
+    ax1.imshow(source_i, cmap='gray')
 
     ax2 = fig.add_subplot(gs[3])
     ax2.set_title('Ground Truth')    
-    ax2.imshow(target_i)
+    ax2.imshow(target_i, cmap='gray')
 
     # compose second subgrid
     ax3 = fig.add_subplot(gs[1])
     ax3.set_title(models[0].__class__.__name__)    
     out3 = models[0](source)
     _set_metrics(ax3, target, out3)
-    ax3.imshow(toPIL(out3.squeeze()))
+    ax3.imshow(toPIL(out3.squeeze()), cmap='gray')
 
     ax4 = fig.add_subplot(gs[2])
     ax4.set_title(models[1].__class__.__name__)    
     out4 = models[1](source)
     _set_metrics(ax4, target, out4)
-    ax4.imshow(toPIL(out4.squeeze()))
+    ax4.imshow(toPIL(out4.squeeze()), cmap='gray')
 
     if show : plt.show()
 
