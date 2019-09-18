@@ -4,7 +4,7 @@ A PyTorch 1.1.0 implementation of **SRCNN** **EDSR** neural networks for Super R
 
 ## Usage
 
-Since the documentation is a *WIP* I suggest taking a look at these files to figure out how to use my code:
+Since the documentation is a *WIP* I suggest taking a look at the following files to figure out how to use my code:
 
 1. `init_data.py`: starting from source data it performs some preprocessing (eg. RGB-to-GreyScale) and organizes examples and labels into a folder hierarchy.
 
